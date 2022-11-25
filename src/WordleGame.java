@@ -10,6 +10,8 @@ public class WordleGame {
 	private static String answer;
 	private static boolean isGameOver;
 	private static final String CORRECT = "c";
+	private static final String PRESENT = "p";
+	private static final String ABSENT = "a";
 	private static final String ENGLISH_ANSWERS = "src/answers.txt";
 	private static final int numRows = 6;
 	private static final int numCols = 5;
@@ -33,7 +35,6 @@ public class WordleGame {
 		guesses = new String[numRows][numCols];
 		guessEvaluations = new String[numRows][numCols];
 		answer = generateAnswer();
-		System.out.println(answer);
 		isGameOver = false;
 	}
 	
@@ -41,10 +42,13 @@ public class WordleGame {
 		String[] answers = possAnswers.toArray(new String[possAnswers.size()]);
 		Random random = new Random();
 		int randomIdx = random.nextInt(possAnswers.size());
+		System.out.println("Answer: "+answers[randomIdx]);
 		return answers[randomIdx];
 	}
 
 	public void addGuess(String guess, int row, int numLetters) {
+		System.out.println(numLetters);
+		System.out.println("Guess = " + guess);
 		for (int i = 0; i < numCols; i++) {
 			if (i < numLetters) {
 				guesses[row][i] = String.valueOf(guess.charAt(i));
