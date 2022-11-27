@@ -1,4 +1,11 @@
-class Controller {
+/**
+ * File: Controller.java
+ * Assignment: CSC335PA3
+ * @author Aman Dwivedi
+ *
+ * Description: This is the Controller class. It handles all the back end operation. 
+ */
+public class Controller {
 
 	private WordleGame game;
 	private UI ui;
@@ -34,7 +41,7 @@ class Controller {
 		if (c.equals(ENTER)) {
 			if (!(guessEvaluator.isInVocabulary(curGuess))) { // checks if word is in vocab
 				ui.throwWarning("Word not allowed");
-				System.out.println("Word not allowed");
+				//System.out.println("Word not allowed");
 				return false;
 			}
 			String[] guessEvaluation = guessEvaluator.evaluateGuess(curGuess, game.getAnswer()); // returns color evaluation
@@ -59,14 +66,14 @@ class Controller {
 		else if (!(Character.isLetter(c.charAt(0))))
 		{
 			ui.throwWarning("Characters must be letters");
-			System.out.println("Chars must be letters");
+			//System.out.println("Chars must be letters");
 			return false;
 		} 
 		else
 		{
 			if (curGuess.length() == game.getMaxGuessSize()) {
 				ui.throwWarning("Already typed 5 letters");
-				System.out.println("Typed 5 letters already");
+				//System.out.println("Typed 5 letters already");
 				return false;
 			}
 			curGuess += c;
@@ -75,13 +82,15 @@ class Controller {
 		game.addGuess(curGuess, curGuessIndex, charIndex);
 		for (int i = 0; i<6; i++) {
 		    for (int j = 0; j<5; j++) {
-		        System.out.print(game.getGuesses()[i][j]);
+		        //System.out.print(game.getGuesses()[i][j]);
 		    }
-		    System.out.println();
+		    //System.out.println();
 		}
 		return false;
 	}
 	
-	private static void newGame() {}
-	
+	private void newGame() {
+		this.start();
+	}
+		
 }
