@@ -5,10 +5,14 @@
  * 				MVC architecture of the client side
  */
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.*;
 import javax.swing.*;
@@ -209,6 +213,21 @@ public class UI {
 				@Override
 				public void keyReleased(KeyEvent e) {}
 			});
+		
+		// Code commented out for Alankrit to take a look - Aman
+		/*
+		JButton restart = new JButton("Restart");
+		restart.setLayout(null);
+		restart.setBounds(600,10,80,50);
+		panel.add(restart);
+		restart.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.restart();
+			}
+		});
+		*/
 	}
 	
 	public void animateToggle()
@@ -245,6 +264,12 @@ public class UI {
 	public void endGame() {
 		gameOver = true;
 		state.setText("G A M E   O V E R !");
+		try {
+			controller.saveGame();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void toggleMode()

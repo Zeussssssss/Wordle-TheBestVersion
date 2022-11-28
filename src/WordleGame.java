@@ -31,7 +31,7 @@ public class WordleGame {
 
 	}
 
-	private static void init() {
+	public void init() {
 		guesses = new String[numRows][numCols];
 		guessEvaluations = new String[numRows][numCols];
 		answer = generateAnswer();
@@ -74,7 +74,7 @@ public class WordleGame {
 		
 	}
 	
-	private static boolean allCorrect(String[] guessEvaluation) {
+	public boolean allCorrect(String[] guessEvaluation) {
 		for (int i = 0; i < numCols; i++) {
 			if (!(guessEvaluation[i].equals(CORRECT))) {
 				return false;

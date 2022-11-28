@@ -5,6 +5,11 @@
  *
  * Description: This is the Controller class. It handles all the back end operation. 
  */
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import org.json.JSONObject;
+
 public class Controller {
 
 	private WordleGame game;
@@ -13,7 +18,8 @@ public class Controller {
 	private static  GuessEvaluator guessEvaluator;
 	private static int curGuessIndex;
 	private static int charIndex;
-
+	private boolean won = false;
+	
 	private final static String ENTER = "ENTER";
 	private final static String BACKSPACE = "BACKSPACE";
 
@@ -37,7 +43,7 @@ public class Controller {
 	
 	public WordleGame getGame() { return game; }
 
-	public boolean update(String c) {
+	public boolean update(String c){
 		if (c.equals(ENTER)) {
 			if (!(guessEvaluator.isInVocabulary(curGuess))) { // checks if word is in vocab
 				ui.throwWarning("Word not allowed");
@@ -47,6 +53,9 @@ public class Controller {
 			String[] guessEvaluation = guessEvaluator.evaluateGuess(curGuess, game.getAnswer()); // returns color evaluation
 			game.addGuessEvaluation(guessEvaluation, curGuessIndex);
 			ui.animateRow(curGuessIndex);
+			if(game.allCorrect(guessEvaluation)) {
+				this.won = true;
+			}
 			if (game.isGameOver()) {
 				ui.endGame();
 			}
@@ -92,5 +101,34 @@ public class Controller {
 	private void newGame() {
 		this.start();
 	}
+
+	public void restart() {
+		game.init();
+		//guessEvaluator = new GuessEvaluator();
+		init();
+		//this.start();
+	}
+	
+	public void saveGame() throws IOException {/*		
+		JSONObject json = new JSONObject();
+	      //Inserting key-value pairs into the json object
+		JSONObject curGame = new JSONObject();
+		curGame.put("Won", game.isGameOver());
+		curGame.put("Guesses", curGuessIndex);
+		json.put("Game", curGame);
+	      try {
+	         FileWriter file = new FileWriter("data.json");
+	         file.write(json.toString());
+	         file.close();
+	      } catch (IOException e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      }
+	      System.out.println("JSON file created: "+json);*/
 		
+		File file = new File("data.txt");
+		FileWriter fr = new FileWriter(file, true);
+		fr.write(this.won + " " + (curGuessIndex+1) + "\n");
+		fr.close();
+	   }		
 }
