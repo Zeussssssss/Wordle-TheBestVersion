@@ -51,8 +51,8 @@ public class UI {
 	public UI(String mode)
 	{
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.height = (int)screenSize.getHeight();
-		this.width = (int)screenSize.getWidth();
+		this.height = (int)(screenSize.getHeight()*0.9);
+		this.width = (int)(screenSize.getWidth()*0.8);
 		labelSize = (int)((height/10)-15);
 		xPadding = (width-(labelSize*5+40))/2;
 		yPadding = height/10;
@@ -107,8 +107,8 @@ public class UI {
 		frame = new JFrame(WORDLE);
 		frame.setLayout(null);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		//frame.setBounds((int)((screenSize.getWidth()-width)/2), (int)(screenSize.getHeight()*0.1/2)-10, width,height);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setBounds((int)((screenSize.getWidth()-width)/2), (int)(screenSize.getHeight()*0.1/2)-10, width,height);
+//		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setVisible(true);
 		
 		//Creating panel to add all labels and graphic elements

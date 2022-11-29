@@ -110,22 +110,7 @@ public class Controller {
 		//this.start();
 	}
 	
-	public void saveGame() throws IOException {/*		
-		JSONObject json = new JSONObject();
-	      //Inserting key-value pairs into the json object
-		JSONObject curGame = new JSONObject();
-		curGame.put("Won", game.isGameOver());
-		curGame.put("Guesses", curGuessIndex);
-		json.put("Game", curGame);
-	      try {
-	         FileWriter file = new FileWriter("data.json");
-	         file.write(json.toString());
-	         file.close();
-	      } catch (IOException e) {
-	         // TODO Auto-generated catch block
-	         e.printStackTrace();
-	      }
-	      System.out.println("JSON file created: "+json);*/
+	public void saveGame() throws IOException {
 		
 		File file = new File("data.txt");
 		FileWriter fr = new FileWriter(file, true);

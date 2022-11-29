@@ -3,6 +3,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 
@@ -11,19 +12,29 @@ import java.util.concurrent.Executors;
  * @author Aditya
  *
  */
-public class WordleServer {
+public class WordleServer implements Runnable{
 	private static Game game = new Game();
 
-	public static void main(String[] args) throws Exception {
-		System.out.println(InetAddress.getLocalHost());
-
+	public void run(){
+		try {
+			System.out.println(InetAddress.getLocalHost());
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
 		try (var listener = new ServerSocket(59896)) {
 			System.out.println("The Wordle server is running...");
 			var pool = Executors.newFixedThreadPool(2);
 			while (true) {
 				pool.execute(new ClientManager(listener.accept()));
 			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
+	}
+	
+	public String getAddress() throws UnknownHostException {
+			return InetAddress.getLocalHost().toString().split("/")[1];
 	}
 
 	/**
@@ -81,7 +92,7 @@ public class WordleServer {
 					you.getOutput().println("<< DONE");
 					you.getTeamMate().getOutput().println("<< ADD LETTER " + letter );
 				}
-				else if(command.equals(">> SUBMIT ATTEMPT")) { //Enter pressed
+				else if(command.equals(">> SUBMIT")) { //Enter pressed
 					you.getOutput().println("<< DONE");
 					you.getTeamMate().getOutput().println("<< SUBMIT");
 					switchCurrentPlayer();
@@ -95,6 +106,10 @@ public class WordleServer {
 				else if(command.equals(">> RESTART")) { 
 					you.getOutput().println("<< DONE");
 					you.getTeamMate().getOutput().println("<< RESTART");
+				}
+				else if(command.startsWith(">> WORD:")) {
+					you.getOutput().println("<< DONE");
+					you.getTeamMate().getOutput().println("<< WORD: " + command.split(" ")[2]);
 				}
 				else if(command.equals(">> QUIT")) {
 					return; 
