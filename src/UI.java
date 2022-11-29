@@ -5,24 +5,21 @@
  * 				MVC architecture of the client side
  */
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.*;
+import java.util.List;
+
 import javax.swing.*;
 public class UI {
 	
 	private static String mode;
 	private static Controller controller;
 	private static JFrame frame;
-	private static boolean isGameOver;
-	private static boolean freeze, gameOver;
+	private static boolean isGameOver,freeze, gameOver;
 	private static JLabel[][] grid;
 	private static JPanel panel;
 	private static JLabel state, box, swtch;
@@ -30,31 +27,38 @@ public class UI {
 	private static final String BACKSPACE = "BACKSPACE";
 	private static final String ENTER = "ENTER";
 	private static final int GAME_FONTSIZE = 35;
-	private static final Font globalFont = new Font("Cursive", Font.BOLD, 30);
-	private static final Font displayFont = new Font("Arial",Font.BOLD, GAME_FONTSIZE);
-	private static final int xPadding = 50;
-	private static final int yPadding = 90;
-	private static final int xBoxDist = 120;
-	private static final int yBoxDist = 115;
-	private static final Color BLACK = Color.black;
-	private static final Color WHITE = Color.white;
-	private static final Color GREEN = Color.green;
+	private static Font globalFont;
+	private static final Font displayFont = new Font("Helvetica",Font.BOLD, GAME_FONTSIZE);
+	private static int xPadding,yPadding,xBoxDist,yBoxDist,labelSize,height,width, buttonPaddingX, buttonPaddingY;
+	private static final Color BLACK = new Color(40,40,40);
+	private static final Color WHITE = new Color(220,220,215);
+	private static final Color GREEN = new Color(0,200,0);
 	private static final Color YELLOW = new Color(245, 224, 66);
 	private static final Color DARK_GRAY = Color.DARK_GRAY;
 	private static final Color LIGHT_GRAY = Color.LIGHT_GRAY;
 	private static Color  labelBack, labelFore, panelCol;
-	private int labelSize = 100;
 	private static final Map<String, Color> colorEvaluationMap = Map.of(
 			"c", GREEN,
 			"p", YELLOW,
 			"a", DARK_GRAY
 	);
+	private Map<JLabel,Color> keys;
+	private char keyboard[][] = {{'Q','W','E','R','T','Y','U','I','O','P'},{'A','S','D','F','G','H','J','K','L'},{'Z','X','C','V','B','N','M'}};
 	
 	/**
 	 * Constructor to create the basic view
 	 */
-	public UI(String mode) 
-	{ 
+	public UI(String mode)
+	{
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.height = (int)screenSize.getHeight();
+		this.width = (int)screenSize.getWidth();
+		labelSize = (int)((height/10)-15);
+		xPadding = (width-(labelSize*5+40))/2;
+		yPadding = height/10;
+		xBoxDist = yBoxDist = labelSize+7;
+		globalFont = new Font("Sans-serif", Font.BOLD, (int)(labelSize*0.7));
+		keys = new HashMap<JLabel,Color>();
 		this.mode = mode;
 		if(mode.equals("light"))
 		{
@@ -102,44 +106,46 @@ public class UI {
 		//Creating main frame
 		frame = new JFrame(WORDLE);
 		frame.setLayout(null);
-		frame.setBounds(0, 0, 700, 820);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//frame.setBounds((int)((screenSize.getWidth()-width)/2), (int)(screenSize.getHeight()*0.1/2)-10, width,height);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setVisible(true);
 		
 		//Creating panel to add all labels and graphic elements
 		panel = new JPanel();
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
-		panel.setBounds(0,0,700,800);
+		panel.setBounds(0,0,width,height);
 		
 		//Creating Label for game state
-		state = new JLabel("W   O   R   D   L   E", SwingConstants.CENTER);
+		state = new JLabel("WORDLE", SwingConstants.CENTER);
 		state.setFont(globalFont);
-		state.setBounds(200,10,300,50);
+		state.setBounds(0,0,width,(int)(height*0.1));
 		state.setForeground(labelFore);
 		panel.add(state);
 		
 		panel.setBackground(labelBack);
 		//Adding Toggle
-		box = new JLabel("  LIGHT    DARK", SwingConstants.LEFT);
+		box = new JLabel("LIGHT    DARK", SwingConstants.CENTER);
 		box.setFont(new Font("Arial",Font.BOLD,10));
-		box.setBounds(15,10,100,60);
-		box.setBorder(BorderFactory.createLineBorder(Color.black, 5));
+		box.setBounds(15,(int)(height*0.02),100, (int)(height*0.06));
+		box.setBorder(BorderFactory.createLineBorder(BLACK, 3));
 		
 		swtch = new JLabel("SWITCH");
 		swtch.setFont(new Font("Arial",Font.BOLD,8));
 		if(mode.equals("light"))
 		{
-			box.setBorder(BorderFactory.createLineBorder(Color.black, 5));
-			swtch.setBounds(25,20,40,40);
-			box.setForeground(Color.black);
-			swtch.setForeground(Color.black);
+			box.setBorder(BorderFactory.createLineBorder(BLACK, 5));
+			swtch.setBounds(25,(int)(height*0.035),40,(int)(height*0.04));
+			box.setForeground(BLACK);
+			swtch.setForeground(BLACK);
 		}
 		else
 		{
-			box.setBorder(BorderFactory.createLineBorder(Color.white, 5));
-			swtch.setBounds(65,20,40,40);
-			box.setForeground(Color.white);
-			swtch.setForeground(Color.white);
+			box.setBorder(BorderFactory.createLineBorder(WHITE, 5));
+			swtch.setBounds(65,(int)(height*0.035),40,(int)(height*0.03));
+			box.setForeground(WHITE);
+			swtch.setForeground(WHITE);
 		}
 		swtch.setOpaque(true);
 		swtch.setBackground(Color.red);
@@ -172,12 +178,75 @@ public class UI {
 			{
 				JLabel label = new JLabel("",SwingConstants.CENTER);
 				label.setFont(globalFont);
-				label.setBounds(xPadding+(xBoxDist*j),yPadding+(yBoxDist*i),100,100);
-				label.setBorder(BorderFactory.createLineBorder(labelFore, 5));
+				label.setBounds(xPadding+(xBoxDist*j),yPadding+(yBoxDist*i),labelSize,labelSize);
+				label.setBorder(BorderFactory.createLineBorder(labelFore, 3, true));
 				grid[i][j] = label;
 				panel.add(label);
 			}
 		}
+		int offset = (int)(height*0.65);
+		int keySize = (int)(labelSize*0.9);
+		int offsetX = (int)(width*0.15);
+		int labelX = (int)(width*0.06);
+		for(int x=0;x<3;x++)
+		{
+			System.out.println("Length: "+keyboard[x].length);
+			offsetX = (width - ((int)(keyboard[x].length*(labelX+10)-10)))/2;
+			for(int y = 0;y<keyboard[x].length;y++)
+			{
+				JLabel key = new JLabel(keyboard[x][y]+"", SwingConstants.CENTER);
+				key.setFont(new Font("Arial",Font.BOLD,(int)(keySize*0.4)));
+				key.setBounds(offsetX,offset,labelX,labelSize);
+				key.setBackground(LIGHT_GRAY);
+				key.setOpaque(true);
+				key.setForeground(BLACK);
+				panel.add(key);
+				keys.put(key, LIGHT_GRAY);
+				offsetX+=(labelX+10);
+				key.addMouseListener(new MouseListener()
+						{
+
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								if(!freeze && !gameOver)
+								{
+									JLabel pointed = (JLabel) e.getComponent();
+									boolean animation = controller.update(Character.toLowerCase(pointed.getText().charAt(0))+"");
+									if(!animation)
+										displayBoard();
+								}
+								
+							}
+
+							@Override
+							public void mousePressed(MouseEvent e) {
+								JLabel pointed = (JLabel) e.getComponent();
+								pointed.setBackground(new Color(10,10,10));
+							}
+
+							@Override
+							public void mouseReleased(MouseEvent e) {
+								JLabel pointed = (JLabel) e.getComponent();
+								pointed.setBackground(keys.get(pointed));
+							}
+
+							@Override
+							public void mouseEntered(MouseEvent e) {
+								JLabel pointed = (JLabel) e.getComponent();
+								pointed.setBackground(DARK_GRAY);
+							}
+
+							@Override
+							public void mouseExited(MouseEvent e) {
+								JLabel pointed = (JLabel) e.getComponent();
+								pointed.setBackground(keys.get(pointed));
+							}
+					
+						});
+			}
+			offset+=(keySize+15);
+		}
+		
 		displayBoard();
 		
 		//Adding the KeyListener to frame
@@ -213,21 +282,6 @@ public class UI {
 				@Override
 				public void keyReleased(KeyEvent e) {}
 			});
-		
-		// Code commented out for Alankrit to take a look - Aman
-		/*
-		JButton restart = new JButton("Restart");
-		restart.setLayout(null);
-		restart.setBounds(600,10,80,50);
-		panel.add(restart);
-		restart.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.restart();
-			}
-		});
-		*/
 	}
 	
 	public void animateToggle()
@@ -249,54 +303,67 @@ public class UI {
 		state.setText(msg);
 	}
 	
-	public void animateRow(int rowIdx) {
+	public void animateRow(int rowIdx, String type) {
+		
 		freeze = true;
 		Timer time = new Timer();
-		int delay = 500;
-		for(int x=0;x<5;x++)
+		if(type.equals("right"))
 		{
-			long time1 = System.currentTimeMillis();
-			TimerTask Anim = new Animate(rowIdx,x,time);
-			time.schedule(Anim, delay*x, 10);
+			int delay = 500;
+			for(int x=0;x<5;x++)
+			{
+				long time1 = System.currentTimeMillis();
+				TimerTask Anim = new Animate(rowIdx, x, time);
+				time.schedule(Anim, delay*x, 10);
+			}
+		}
+		else
+		{
+			for(int x=0;x<5;x++)
+			{
+				long time1 = System.currentTimeMillis();
+				TimerTask Anim = new Shake(rowIdx, x, time);
+				time.schedule(Anim, 0, 10);
+			}
 		}
 	}
 	
 	public void endGame() {
 		gameOver = true;
 		state.setText("G A M E   O V E R !");
-		try {
-			controller.saveGame();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public void toggleMode()
 	{
 		if(mode.equals("light"))
 		{
-			panel.setBackground(Color.black);
-			labelFore = Color.white;
-			labelBack = Color.black;
-			box.setBorder(BorderFactory.createLineBorder(Color.white, 5));
-			box.setForeground(Color.white);
-			swtch.setForeground(Color.white);
+			panel.setBackground(BLACK);
+			labelFore = WHITE;
+			labelBack = BLACK;
+			box.setBorder(BorderFactory.createLineBorder(WHITE, 3));
+			box.setForeground(WHITE);
+			swtch.setForeground(WHITE);
 			for(int i = 0;i<6;i++)
 				for(int j = 0;j<5;j++)
-					grid[i][j].setBorder(BorderFactory.createLineBorder(Color.white, 5));
+				{
+					if(grid[i][j].getBorder()!=null)
+						grid[i][j].setBorder(BorderFactory.createLineBorder(WHITE, 3));
+				}
 		}
 		else
 		{
-			panel.setBackground(Color.white);
-			labelFore = Color.black;
-			labelBack = Color.white;
-			box.setBorder(BorderFactory.createLineBorder(Color.black, 5));
-			box.setForeground(Color.black);
-			swtch.setForeground(Color.black);
+			panel.setBackground(WHITE);
+			labelFore = BLACK;
+			labelBack = WHITE;
+			box.setBorder(BorderFactory.createLineBorder(BLACK, 3));
+			box.setForeground(BLACK);
+			swtch.setForeground(BLACK);
 			for(int i = 0;i<6;i++)
 				for(int j = 0;j<5;j++)
-					grid[i][j].setBorder(BorderFactory.createLineBorder(Color.black, 5));
+				{
+					if(grid[i][j].getBorder()!=null)
+						grid[i][j].setBorder(BorderFactory.createLineBorder(BLACK, 3));
+				}
 		}
 		displayBoard();
 	}
@@ -345,7 +412,7 @@ public class UI {
 				freeze = false;
 				timer.cancel();
 			}
-			swtch.setBounds(x1,20,40,40);
+			swtch.setBounds(x1,(int)(height*0.035),40,(int)(height*0.03));
 		}
 		
 	}
@@ -383,6 +450,13 @@ public class UI {
 				{
 					String evaluation = controller.getGame().getGuessEvaluations()[rowIdx][x];
 					grid[rowIdx][x].setBackground(colorEvaluationMap.get(evaluation));
+					for(JLabel k: keys.keySet())
+						if(k.getText().equals(grid[rowIdx][x].getText()))
+						{
+							keys.put(k, colorEvaluationMap.get(evaluation));
+							k.setBackground(colorEvaluationMap.get(evaluation));
+						}
+					grid[rowIdx][x].setBorder(null);
 					colorChanged = true;
 				}
 				if(size<labelSize)
@@ -395,6 +469,53 @@ public class UI {
 					freeze = false;
 					timer.cancel();
 				}
+			}
+		}
+	}
+	
+	class Shake extends TimerTask
+	{
+		int rowIdx;
+		int size;
+		int time = 0;
+		int x, initialX, changeable, change;
+		boolean completed = false;
+		Timer timer;
+		public Shake(int rowIdx, int x, Timer timer)
+		{
+			this.rowIdx = rowIdx;
+			size = labelSize;
+			this.x = x;
+			initialX = changeable = xPadding+(xBoxDist*x);
+			this.timer = timer;
+			change = 0;
+		}
+		
+		public void run() 
+		{
+			if(change==5)
+			{
+				changeable-=1;
+				if(changeable==initialX)
+					change+=1;
+			}
+			else if(change%2==0)
+			{
+				changeable+=1;
+				if(changeable==initialX+3)
+					change+=1;
+			}
+			else
+			{
+				changeable-=2;
+				if(changeable==initialX-3)
+					change+=1;
+			}
+			grid[rowIdx][x].setBounds(changeable,yPadding+(yBoxDist)*rowIdx,labelSize,labelSize);
+			if(change==6)
+			{
+				timer.cancel();
+				freeze = false;
 			}
 		}
 	}

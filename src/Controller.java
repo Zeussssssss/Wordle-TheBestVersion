@@ -8,7 +8,6 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import org.json.JSONObject;
 
 public class Controller {
 
@@ -45,14 +44,16 @@ public class Controller {
 
 	public boolean update(String c){
 		if (c.equals(ENTER)) {
-			if (!(guessEvaluator.isInVocabulary(curGuess))) { // checks if word is in vocab
+			if (!(guessEvaluator.isInVocabulary(curGuess))) { 
+				// checks if word is in vocab
 				ui.throwWarning("Word not allowed");
+				ui.animateRow(curGuessIndex,"wrong");
 				//System.out.println("Word not allowed");
-				return false;
+				return true;
 			}
 			String[] guessEvaluation = guessEvaluator.evaluateGuess(curGuess, game.getAnswer()); // returns color evaluation
 			game.addGuessEvaluation(guessEvaluation, curGuessIndex);
-			ui.animateRow(curGuessIndex);
+			ui.animateRow(curGuessIndex,"right");
 			if(game.allCorrect(guessEvaluation)) {
 				this.won = true;
 			}

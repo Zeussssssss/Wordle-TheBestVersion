@@ -31,7 +31,7 @@ class GuessEvaluator {
 	}
 
 	public boolean isInVocabulary(String word) {
-		return allowedGuesses.contains(word.toLowerCase());
+		return allowedGuesses.contains(word);
 	}
 
 	public String[] evaluateGuess(String guess, String answer) {
