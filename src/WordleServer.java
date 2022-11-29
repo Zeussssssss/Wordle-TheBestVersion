@@ -5,26 +5,30 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
  * Server class
+ * 
  * @author Aditya
  *
  */
-public class WordleServer implements Runnable{
+public class WordleServer implements Runnable {
 	private static Game game = new Game();
+	private ServerSocket listener;
+	private static ExecutorService pool;
 
-	public void run(){
+	public WordleServer() throws Exception {
+		listener = new ServerSocket(59896);
+		pool = Executors.newFixedThreadPool(2);
+		System.out.println(InetAddress.getLocalHost());
+		System.out.println("The Wordle server is running...");
+
+	}
+
+	public void run() {
 		try {
-			System.out.println(InetAddress.getLocalHost());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		
-		try (var listener = new ServerSocket(59896)) {
-			System.out.println("The Wordle server is running...");
-			var pool = Executors.newFixedThreadPool(2);
 			while (true) {
 				pool.execute(new ClientManager(listener.accept()));
 			}
@@ -32,13 +36,14 @@ public class WordleServer implements Runnable{
 			e1.printStackTrace();
 		}
 	}
-	
+
 	public String getAddress() throws UnknownHostException {
-			return InetAddress.getLocalHost().toString().split("/")[1];
+		return InetAddress.getLocalHost().toString().split("/")[1];
 	}
 
 	/**
 	 * Manages every client that joins the server
+	 * 
 	 * @author Aditya
 	 *
 	 */
@@ -53,22 +58,21 @@ public class WordleServer implements Runnable{
 			if (game.getCurrentPlayer() == null) {
 				game.setPlayerOne(you);
 				you.getOutput().println("<< YOUR TURN STARTS");
-			}
-			else {
+			} else {
 				game.setPlayerTwo(you);
 				you.setTeamMate(game.getPlayerOne());
 				game.getPlayerOne().setTeamMate(you);
 			}
 			you.setInput(new Scanner(socket.getInputStream()));
-			you.setOutput(new PrintWriter(socket.getOutputStream(), true));			
+			you.setOutput(new PrintWriter(socket.getOutputStream(), true));
 		}
 
 		@Override
 		public void run() {
-			try{
+			try {
 				System.out.println("Connected: " + socket);
 				processCommands();
-			}catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				try {
@@ -80,43 +84,38 @@ public class WordleServer implements Runnable{
 		}
 
 		private synchronized void processCommands() {
-			while(you.getInput().hasNextLine()) {
+			while (you.getInput().hasNextLine()) {
 				if (you != game.getCurrentPlayer()) {
 					you.getOutput().println("<< REJECTED");
 					continue;
 				}
-				
+
 				var command = you.getInput().nextLine().replace("\n", "");
-				if(command.startsWith(">> ADD LETTER")) {
+				if (command.startsWith(">> ADD LETTER")) {
 					String letter = command.split(" ")[3];
 					you.getOutput().println("<< DONE");
-					you.getTeamMate().getOutput().println("<< ADD LETTER " + letter );
-				}
-				else if(command.equals(">> SUBMIT")) { //Enter pressed
+					you.getTeamMate().getOutput().println("<< ADD LETTER " + letter);
+				} else if (command.equals(">> SUBMIT")) { // Enter pressed
 					you.getOutput().println("<< DONE");
 					you.getTeamMate().getOutput().println("<< SUBMIT");
 					switchCurrentPlayer();
 					you.getOutput().println("<< YOUR TURN ENDS");
 					you.getTeamMate().getOutput().println("<< YOUR TURN STARTS");
-				}
-				else if(command.equals(">> DELETE")) {
+				} else if (command.equals(">> DELETE")) {
 					you.getOutput().println("<< DONE");
 					you.getTeamMate().getOutput().println("<< DELETE");
-				}
-				else if(command.equals(">> RESTART")) { 
+				} else if (command.equals(">> RESTART")) {
 					you.getOutput().println("<< DONE");
 					you.getTeamMate().getOutput().println("<< RESTART");
-				}
-				else if(command.startsWith(">> WORD:")) {
+				} else if (command.startsWith(">> WORD:")) {
 					you.getOutput().println("<< DONE");
 					you.getTeamMate().getOutput().println("<< WORD: " + command.split(" ")[2]);
-				}
-				else if(command.equals(">> QUIT")) {
-					return; 
+				} else if (command.equals(">> QUIT")) {
+					return;
 				}
 			}
 		}
-		
+
 		private void switchCurrentPlayer() {
 			if (game.getCurrentPlayer() == game.getPlayerOne())
 				game.setCurrentPlayer(game.getPlayerTwo());

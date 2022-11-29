@@ -70,8 +70,8 @@ public class Main {
 				create.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new Thread(server = new WordleServer());
 						try {
+							new Thread(server = new WordleServer());
 							newGame(false, server.getAddress());
 						} catch (Exception exception) {
 						}
