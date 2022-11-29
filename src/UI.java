@@ -32,8 +32,8 @@ public class UI {
 	private static int xPadding,yPadding,xBoxDist,yBoxDist,labelSize,height,width, buttonPaddingX, buttonPaddingY;
 	private static final Color BLACK = new Color(40,40,40);
 	private static final Color WHITE = new Color(220,220,215);
-	private static final Color GREEN = new Color(0,200,0);
-	private static final Color YELLOW = new Color(245, 224, 66);
+	private static final Color GREEN = new Color(16, 176, 52);
+	private static final Color YELLOW = new Color(204, 172, 8);
 	private static final Color DARK_GRAY = Color.DARK_GRAY;
 	private static final Color LIGHT_GRAY = Color.LIGHT_GRAY;
 	private static Color  labelBack, labelFore, panelCol;
