@@ -87,7 +87,7 @@ public class UI {
 				letter = letter != null ? letter.toUpperCase() : " ";
 				label.setText(letter);
 				if (evaluation != null) {
-					System.out.println("EVALUTAION: "+evaluation);
+//					System.out.println("EVALUTAION: "+evaluation);
 					label.setBackground(colorEvaluationMap.get(evaluation));
 				} else {
 					label.setBackground(labelBack);
@@ -190,7 +190,7 @@ public class UI {
 		int labelX = (int)(width*0.06);
 		for(int x=0;x<3;x++)
 		{
-			System.out.println("Length: "+keyboard[x].length);
+//			System.out.println("Length: "+keyboard[x].length);
 			offsetX = (width - ((int)(keyboard[x].length*(labelX+10)-10)))/2;
 			for(int y = 0;y<keyboard[x].length;y++)
 			{
@@ -438,10 +438,10 @@ public class UI {
 		{
 			if(size>0 && !increasing)
 			{
-				System.out.println("Time at: "+time);
+//				System.out.println("Time at: "+time);
 				size-=4;
 				grid[rowIdx][x].setBounds(xPadding+(xBoxDist*x)+(labelSize-size)/2, yPadding+(yBoxDist*rowIdx)+(labelSize-size)/2, size, size);
-				System.out.println("Size:"+size);
+//				System.out.println("Size:"+size);
 			}
 			else
 			{

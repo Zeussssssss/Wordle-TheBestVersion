@@ -54,7 +54,7 @@ public class WordleServer implements Runnable {
 
 		public ClientManager(Socket socket) throws Exception {
 			this.socket = socket;
-			you = new Player();
+			you = new Player(socket);
 			if (game.getCurrentPlayer() == null) {
 				game.setPlayerOne(you);
 				you.getOutput().println("<< YOUR TURN STARTS");
@@ -63,8 +63,6 @@ public class WordleServer implements Runnable {
 				you.setTeamMate(game.getPlayerOne());
 				game.getPlayerOne().setTeamMate(you);
 			}
-			you.setInput(new Scanner(socket.getInputStream()));
-			you.setOutput(new PrintWriter(socket.getOutputStream(), true));
 		}
 
 		@Override
