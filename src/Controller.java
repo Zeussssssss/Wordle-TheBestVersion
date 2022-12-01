@@ -1,4 +1,3 @@
-
 /**
  * File: Controller.java
  * Assignment: CSC335PA3
@@ -121,6 +120,10 @@ public class Controller {
 
 	private void newGame() {
 		this.start();
+	}
+	
+	public boolean won() {
+		return won;
 	}
 
 	public void restart() {

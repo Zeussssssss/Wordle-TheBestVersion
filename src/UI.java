@@ -9,17 +9,22 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.Timer;
 import java.util.*;
 import java.util.List;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 public class UI {
 	
 	private static String mode;
 	private static Controller controller;
 	private static JFrame frame;
-	private static boolean isGameOver,freeze, gameOver;
+	private static boolean freeze, gameOver;
 	private static JLabel[][] grid;
 	private static JPanel panel;
 	private static JLabel state, box, swtch;
@@ -50,6 +55,7 @@ public class UI {
 	 */
 	public UI(String mode)
 	{
+		playMusic("start.wav");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.height = (int)(screenSize.getHeight()*0.9);
 		this.width = (int)(screenSize.getWidth()*0.8);
@@ -246,7 +252,6 @@ public class UI {
 			}
 			offset+=(keySize+15);
 		}
-		
 		displayBoard();
 		
 		//Adding the KeyListener to frame
@@ -268,8 +273,6 @@ public class UI {
 				{
 					if(!freeze && !gameOver)
 					{
-						System.out.println("KEYPRESSED");
-						System.out.println("Pressed: "+e.getKeyCode());
 						if(e.getKeyCode() == 8) {
 							animation = controller.update(BACKSPACE);
 						} else if(e.getKeyCode() == 10) {
@@ -332,9 +335,28 @@ public class UI {
 		gameOver = true;
 		state.setText("G A M E   O V E R !");
 	}
+
+	
+	public void playMusic(String path)
+	{
+		path = "Resources/"+path;
+		try 
+		{
+			File music = new File(path);
+			AudioInputStream audio = AudioSystem.getAudioInputStream(music);
+			Clip  clip = AudioSystem.getClip();
+			clip.open(audio);
+			clip.start();
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	public void toggleMode()
 	{
+		playMusic("switch.wav");
 		if(mode.equals("light"))
 		{
 			panel.setBackground(BLACK);
@@ -414,7 +436,134 @@ public class UI {
 			}
 			swtch.setBounds(x1,(int)(height*0.035),40,(int)(height*0.03));
 		}
+	}
+	
+	public void displayStats() {
+		// Array format
+		// Played,Won,CurrStreak,HighestStreal,1guess,2guess,3guess,4guess,5guess,6guess
+		int arr[]= {15,13,4,7,2,1,2,2,3,1};
+		// Alter for change in Statistics
+		if(controller.won())
+			playMusic("Win.wav");
+		else
+			playMusic("Lose.wav");
 		
+		int x = (int)(0.8*height);
+		JFrame frame = new JFrame("STATS");
+		frame.setBounds(500,100,x,x);
+		JPanel jp = new JPanel();
+		frame.getContentPane().add(jp);
+		frame.setLayout(null);
+		jp.setLayout(null);
+		jp.setBounds(0,0,x,x);
+		jp.setBackground(labelBack);
+		
+		JLabel status = new JLabel(controller.won()? "YOU WON":"YOU LOST",SwingConstants.CENTER);
+		status.setFont(displayFont);
+		status.setBackground(labelBack);
+		status.setForeground(labelFore);
+		status.setBounds(0,2,x,x/10);
+		jp.add(status);
+		
+		JLabel gd = new JLabel("GUESS DISTRIBUTION",SwingConstants.LEFT);
+		gd.setFont(new Font("Helvetic",Font.BOLD, 17));
+		gd.setBackground(labelBack);
+		gd.setForeground(labelFore);
+		gd.setBounds(x/10,(x/15)+(10+x/15)-30,x/2,25);
+		jp.add(gd);
+		
+		JLabel word = new JLabel("WORD WAS: "+controller.getGame().getAnswer(),SwingConstants.RIGHT);
+		word.setFont(new Font("Helvetic",Font.BOLD, 17));
+		word.setBackground(labelBack);
+		word.setForeground(labelFore);
+		word.setBounds(x/10,(x/15)+(10+x/15)-30,x-(2*(x/9)),25);
+		jp.add(word);
+		
+		int barWidth = (int)(x/1.425);
+		
+		String ar[] = {"GAMES PLAYED","GAMES WON","CURRENT STREAK","HIGHEST STREAK"};
+		int leftPad = x/10;
+		int midPad = (int)((barWidth+(x/15)+10-(4*(x/15)))/2.28);
+		for(int x1=0;x1<4;x1++)
+		{
+			JLabel quant = new JLabel(arr[x1]+"",SwingConstants.CENTER);
+			quant.setFont(new Font("Arial",Font.BOLD,(int)(0.6*x/10)));
+			quant.setBounds(leftPad+(midPad*x1),(x/15+x/15+20)+(10+x/15)*6,x/10,x/10);
+			quant.setForeground(labelFore);
+			quant.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+			jp.add(quant);
+			
+			JLabel name = new JLabel(ar[x1]+"",SwingConstants.CENTER);
+			name.setFont(new Font("Arial",Font.BOLD,(int)(0.15*x/10)));
+			name.setBounds((int)(leftPad-12+((midPad)*x1)),(x/10+x/15+x/15)+(10+x/15)*6,x/10+24,x/10);
+			name.setForeground(labelFore);
+			jp.add(name);
+		}
+		
+
+		frame.setVisible(true);
+		int currWait = 0;
+		for(int y=1;y<=6;y++)
+		{
+			System.out.println("Entered "+y+" time");
+			JLabel label = new JLabel(y+"",SwingConstants.CENTER);
+			label.setForeground(labelBack);
+			label.setBackground(labelFore);
+			label.setFont(new Font("Arial",Font.BOLD,(int)(0.7*x/15)));
+			label.setBounds(x/10,(x/15)+(10+x/15)*y,x/15,x/15);
+			label.setOpaque(true);
+			jp.add(label);
+			
+			
+			
+			int width = (int)(((double)arr[3+y]/arr[0])*barWidth);
+			int percentage = (int)(((double)arr[3+y]/arr[0])*100);
+			
+			JLabel percent = new JLabel(percentage+"%",SwingConstants.CENTER);
+			percent.setBounds((x/10+x/15+10),(x/15)+(10+x/15)*y,barWidth,x/15);
+			jp.add(percent);
+			percent.setVisible(true);
+			JLabel greenBar = new JLabel("");
+			greenBar.setBounds((x/10+x/15+10),(x/15)+(10+x/15)*y,0,x/15);
+			greenBar.setBackground(Color.green);
+			greenBar.setOpaque(true);
+			jp.add(greenBar);
+			
+			JLabel grayBar = new JLabel();
+			grayBar.setBounds((x/10+x/15+10),(x/15)+(10+x/15)*y,barWidth,x/15);
+			grayBar.setBackground(Color.lightGray.brighter());
+			grayBar.setOpaque(true);
+			jp.add(grayBar);
+			
+			Timer t = new Timer();
+			long time1 = System.currentTimeMillis();
+			TimerTask Anim = new BarAnim(greenBar, width, t);
+			t.schedule(Anim, 500+(int)(1.1*currWait), 10);
+			currWait+=(width*10);
+		}
+		jp.repaint();
+	}
+	
+	class BarAnim extends TimerTask
+	{
+		Timer timer;
+		int x;
+		JLabel label;
+		public BarAnim(JLabel label,int x, Timer timer)
+		{
+			this.label = label;
+			this.x = x;
+			this.timer = timer;
+		}
+		
+		public void run() 
+		{
+			Dimension dim = label.getSize();
+			if(dim.width<x)
+				label.setBounds(label.getX(),label.getY(),dim.width+1,dim.height);
+			else
+				timer.cancel();
+		}
 	}
 	
 	class Animate extends TimerTask
@@ -432,16 +581,15 @@ public class UI {
 			size = labelSize;
 			this.x = x;
 			this.timer = timer;
+			state.setText("WORDLE");
 		}
 		
 		public void run() 
 		{
 			if(size>0 && !increasing)
 			{
-//				System.out.println("Time at: "+time);
 				size-=4;
 				grid[rowIdx][x].setBounds(xPadding+(xBoxDist*x)+(labelSize-size)/2, yPadding+(yBoxDist*rowIdx)+(labelSize-size)/2, size, size);
-//				System.out.println("Size:"+size);
 			}
 			else
 			{
@@ -458,6 +606,7 @@ public class UI {
 						}
 					grid[rowIdx][x].setBorder(null);
 					colorChanged = true;
+					playMusic("increase.wav");
 				}
 				if(size<labelSize)
 				{
@@ -468,6 +617,8 @@ public class UI {
 				{
 					freeze = false;
 					timer.cancel();
+					if(gameOver)
+						displayStats();
 				}
 			}
 		}
@@ -483,6 +634,7 @@ public class UI {
 		Timer timer;
 		public Shake(int rowIdx, int x, Timer timer)
 		{
+			playMusic("wrong.wav");
 			this.rowIdx = rowIdx;
 			size = labelSize;
 			this.x = x;
@@ -491,6 +643,7 @@ public class UI {
 			change = 0;
 		}
 		
+
 		public void run() 
 		{
 			if(change==5)
