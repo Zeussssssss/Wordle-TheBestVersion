@@ -72,7 +72,6 @@ public class Controller {
 				// checks if word is in vocab
 				ui.throwWarning("Word not allowed");
 				ui.animateRow(curGuessIndex, "wrong");
-				// System.out.println("Word not allowed");
 				return true;
 			}
 			String[] guessEvaluation = guessEvaluator.evaluateGuess(curGuess, game.getAnswer()); // returns color
@@ -84,6 +83,9 @@ public class Controller {
 			}
 			if (game.isGameOver()) {
 				ui.endGame();
+				WordleBot bot = new WordleBot();
+				bot.evaluate(game);
+				bot.play(game);
 			}
 			curGuess = "";
 			curGuessIndex += 1;
@@ -97,24 +99,16 @@ public class Controller {
 			charIndex -= 1;
 		} else if (!(Character.isLetter(c.charAt(0)))) {
 			ui.throwWarning("Characters must be letters");
-			// System.out.println("Chars must be letters");
 			return false;
 		} else {
 			if (curGuess.length() == game.getMaxGuessSize()) {
 				ui.throwWarning("Already typed 5 letters");
-				// System.out.println("Typed 5 letters already");
 				return false;
 			}
 			curGuess += c;
 			charIndex += 1;
 		}
 		game.addGuess(curGuess, curGuessIndex, charIndex);
-//		for (int i = 0; i < 6; i++) {
-//			for (int j = 0; j < 5; j++) {
-//				// System.out.print(game.getGuesses()[i][j]);
-//			}
-//			// System.out.println();
-//		}
 		return false;
 	}
 
@@ -124,6 +118,10 @@ public class Controller {
 	
 	public boolean won() {
 		return won;
+	}
+	
+	public void getBotEvaluations() {
+		
 	}
 
 	public void restart() {

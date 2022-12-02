@@ -10,7 +10,8 @@ class GuessEvaluator {
 	private static final String CORRECT = "c";
 	private static final String PRESENT = "p";
 	private static final String ABSENT = "a";
-	private static final String ENGLISH_GUESSES = "src/answers.txt";
+	private static final String ENGLISH_ANSWERS = "src/answers.txt";
+	private static final String ENGLISH_GUESSES = "src/allowed_guesses.txt";
 
 	public GuessEvaluator() {
 		try {
@@ -23,9 +24,14 @@ class GuessEvaluator {
 
 	private static void readAllowedGuesses() throws FileNotFoundException {
 		allowedGuesses = new HashSet<String>();
-		Scanner scanner = new Scanner(new File(ENGLISH_GUESSES));
-        while (scanner.hasNext()) {
-            String s = scanner.nextLine();
+		Scanner scannerGuesses = new Scanner(new File(ENGLISH_GUESSES));
+        while (scannerGuesses.hasNext()) {
+            String s = scannerGuesses.nextLine();
+            allowedGuesses.add(s.toLowerCase());
+        }
+        Scanner scannerAnswers = new Scanner(new File(ENGLISH_ANSWERS));
+        while (scannerAnswers.hasNext()) {
+            String s = scannerAnswers.nextLine();
             allowedGuesses.add(s.toLowerCase());
         }
 	}
@@ -62,10 +68,11 @@ class GuessEvaluator {
 
 		// second loop checks for present letters and handles words with double letters
 		for (int i = 0; i < wordSize; i++) {
-			char curLetter = guess.charAt(i);
+			String curLetter = String.valueOf(guess.charAt(i));
 			if (!(evaluation.containsKey(i))) {
-				if (removeCorrect(evaluation, answer).contains(String.valueOf(curLetter)) && frequency.get(String.valueOf(curLetter)) > 0) {
+				if (removeCorrect(evaluation, answer).contains(curLetter) && frequency.get(curLetter) > 0) {
 					evaluation.put(i, PRESENT);
+					frequency.put(curLetter, frequency.get(curLetter)-1);
 				} else {
 					evaluation.put(i, ABSENT);
 				}
