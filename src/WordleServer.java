@@ -1,10 +1,8 @@
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -62,6 +60,7 @@ public class WordleServer implements Runnable {
 				game.setPlayerTwo(you);
 				you.setTeamMate(game.getPlayerOne());
 				game.getPlayerOne().setTeamMate(you);
+				you.getOutput().println("<< WORD: " + game.getAnswer());
 			}
 		}
 
@@ -84,6 +83,8 @@ public class WordleServer implements Runnable {
 		private synchronized void processCommands() {
 			while (you.getInput().hasNextLine()) {
 				if (you != game.getCurrentPlayer()) {
+					// technically this piece of code should never be run
+					// if a client receives this message, then I have messed up
 					you.getOutput().println("<< REJECTED");
 					continue;
 				}
@@ -91,23 +92,27 @@ public class WordleServer implements Runnable {
 				var command = you.getInput().nextLine().replace("\n", "");
 				if (command.startsWith(">> ADD LETTER")) {
 					String letter = command.split(" ")[3];
-					you.getOutput().println("<< DONE");
-					you.getTeamMate().getOutput().println("<< ADD LETTER " + letter);
-				} else if (command.equals(">> SUBMIT")) { // Enter pressed
-					you.getOutput().println("<< DONE");
-					you.getTeamMate().getOutput().println("<< SUBMIT");
-					switchCurrentPlayer();
-					you.getOutput().println("<< YOUR TURN ENDS");
-					you.getTeamMate().getOutput().println("<< YOUR TURN STARTS");
+					if (you.getTeamMate() != null)
+						you.getTeamMate().getOutput().println("<< ADD LETTER " + letter);
+				} else if (command.startsWith(">> SUBMIT")) { // Enter pressed
+					if (you.getTeamMate() != null)
+						you.getTeamMate().getOutput().println("<< SUBMIT" + command.split(" ")[2]);
+					if (command.split(" ")[2].equals("CORRECT")) {
+						switchCurrentPlayer();
+						you.getOutput().println("<< YOUR TURN ENDS");
+					}
+					if (you.getTeamMate() != null)
+						you.getTeamMate().getOutput().println("<< YOUR TURN STARTS");
 				} else if (command.equals(">> DELETE")) {
-					you.getOutput().println("<< DONE");
-					you.getTeamMate().getOutput().println("<< DELETE");
+					if (you.getTeamMate() != null)
+						you.getTeamMate().getOutput().println("<< DELETE");
 				} else if (command.equals(">> RESTART")) {
-					you.getOutput().println("<< DONE");
-					you.getTeamMate().getOutput().println("<< RESTART");
+					if (you.getTeamMate() != null)
+						you.getTeamMate().getOutput().println("<< RESTART");
 				} else if (command.startsWith(">> WORD:")) {
-					you.getOutput().println("<< DONE");
-					you.getTeamMate().getOutput().println("<< WORD: " + command.split(" ")[2]);
+					if (you.getTeamMate() != null)
+						you.getTeamMate().getOutput().println("<< WORD: " + command.split(" ")[2]);
+					game.setAnswer(command.split(" ")[2]);
 				} else if (command.equals(">> QUIT")) {
 					return;
 				}

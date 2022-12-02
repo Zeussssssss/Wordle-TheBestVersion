@@ -35,7 +35,6 @@ public class WordleGame {
 		guesses = new String[numRows][numCols];
 		guessEvaluations = new String[numRows][numCols];
 		answer = generateAnswer();
-//		answer = ""
 		isGameOver = false;
 	}
 	
@@ -48,6 +47,8 @@ public class WordleGame {
 	}
 
 	public void addGuess(String guess, int row, int numLetters) {
+		System.out.println(numLetters);
+		System.out.println("Guess = " + guess);
 		for (int i = 0; i < numCols; i++) {
 			if (i < numLetters) {
 				guesses[row][i] = String.valueOf(guess.charAt(i));
@@ -59,6 +60,7 @@ public class WordleGame {
 		if (row == numRows-1) {
 			isGameOver = true;
 		}
+
 	}
 
 	public void addGuessEvaluation(String[] guessEvaluation, int row) {
@@ -69,6 +71,7 @@ public class WordleGame {
 		if (allCorrect(guessEvaluation)) {
 			isGameOver = true;
 		}
+		
 	}
 	
 	public boolean allCorrect(String[] guessEvaluation) {
@@ -93,5 +96,7 @@ public class WordleGame {
 	public int getMaxGuesses() { return numRows; }
 
 	public String getAnswer() { return answer; }
+	
+	public void changeAnswer(String ans) {answer = ans;}
 	
 }

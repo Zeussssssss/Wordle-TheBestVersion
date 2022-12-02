@@ -38,11 +38,11 @@ public class Main {
         
         Font buttons = new Font("Angwie",Font.BOLD,20);
         Font hover = new Font("Angwie",Font.BOLD,23);
-        JLabel single = new JLabel("New SinglePlayer",SwingConstants.CENTER);
+        JLabel single = new JLabel("Single Player Mode",SwingConstants.CENTER);
         single.setBounds(0, 325, 700, 50);
         single.setForeground(Color.white);
         single.setFont(buttons);
-        JLabel multi = new JLabel("New MultiPlayer",SwingConstants.CENTER);
+        JLabel multi = new JLabel("Collabortative Mode",SwingConstants.CENTER);
         multi.setBounds(0, 400, 700, 50);
         multi.setForeground(Color.white);
         multi.setFont(buttons);
@@ -158,7 +158,7 @@ public class Main {
 				 create.setVisible(false);
                     create.setEnabled(false);
                     join.setVisible(false);
-                    join.setEnabled(false); // Alankrit please make this pretty
+                    join.setEnabled(false); 
                     JTextArea inputField = new JTextArea("Enter Server Address");
                     inputField.setBounds(215, 350, 270, 50);
                     inputField.setBorder(BorderFactory.createLineBorder(Color.white,7,true));

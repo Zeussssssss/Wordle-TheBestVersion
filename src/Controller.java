@@ -1,3 +1,4 @@
+
 /**
  * File: Controller.java
  * Assignment: CSC335PA3
@@ -22,6 +23,7 @@ public class Controller {
 	private static int curGuessIndex;
 	private static int charIndex;
 	private boolean won = false;
+	private boolean myTurn = true;
 
 	private final static String ENTER = "ENTER";
 	private final static String BACKSPACE = "BACKSPACE";
@@ -43,10 +45,13 @@ public class Controller {
 				socket = new Socket(serverAdd, 59896);
 				in = new Scanner(socket.getInputStream());
 				out = new PrintWriter(socket.getOutputStream(), true);
+				myTurn = false;
 
 			} catch (IOException e) {
+				System.out.println("Error on controller side");
 				e.printStackTrace();
 			}
+			new Thread(new ServerReader()).start();
 		}
 		init();
 	}
@@ -66,62 +71,88 @@ public class Controller {
 		return game;
 	}
 
-	public boolean update(String c) {
-		if (c.equals(ENTER)) {
-			if (!(guessEvaluator.isInVocabulary(curGuess))) {
-				// checks if word is in vocab
-				ui.throwWarning("Word not allowed");
-				ui.animateRow(curGuessIndex, "wrong");
+	public boolean update(String c, boolean notifyServer) {
+		// Since only the server reader would call this method with !notifyServer, this
+		// special check
+		// allows the update function to be called when the the second player's client
+		// receives a message
+		// from the server
+		if (myTurn || !notifyServer) {
+			if (c.equals(ENTER)) {
+				if (!(guessEvaluator.isInVocabulary(curGuess))) {
+					// checks if word is in vocab
+					ui.throwWarning("Word not allowed");
+					ui.animateRow(curGuessIndex, "wrong");
+					if (notifyServer && !singlePlayer) {
+						out.println(">> SUBMIT WRONG");
+					}
+					return true;
+				}
+				if (notifyServer && !singlePlayer) {
+					out.println(">> SUBMIT CORRECT");
+				}
+				String[] guessEvaluation = guessEvaluator.evaluateGuess(curGuess, game.getAnswer());
+				// returns color eval ^^
+				game.addGuessEvaluation(guessEvaluation, curGuessIndex);
+				ui.animateRow(curGuessIndex, "right");
+				if (game.allCorrect(guessEvaluation)) {
+					this.won = true;
+					WordleBot bot = new WordleBot();
+					bot.evaluate(game);
+					bot.play(game);
+				}
+				if (game.isGameOver()) {
+					ui.endGame();
+				}
+				curGuess = "";
+				curGuessIndex += 1;
+				charIndex = 0;
 				return true;
-			}
-			String[] guessEvaluation = guessEvaluator.evaluateGuess(curGuess, game.getAnswer()); // returns color
-																									// evaluation
-			game.addGuessEvaluation(guessEvaluation, curGuessIndex);
-			ui.animateRow(curGuessIndex, "right");
-			if (game.allCorrect(guessEvaluation)) {
-				this.won = true;
-			}
-			if (game.isGameOver()) {
-				ui.endGame();
-				WordleBot bot = new WordleBot();
-				bot.evaluate(game);
-				bot.play(game);
-			}
-			curGuess = "";
-			curGuessIndex += 1;
-			charIndex = 0;
-			return true;
-		} else if (c.equals(BACKSPACE)) {
-			if (curGuess.length() == 0) {
+			} else if (c.equals(BACKSPACE)) {
+				if (notifyServer && !singlePlayer) {
+					out.println(">> DELETE");
+				}
+				if (curGuess.length() == 0) {
+					ui.displayBoard();
+					return false;
+				}
+				curGuess = curGuess.substring(0, curGuess.length() - 1); // take last char from string
+				charIndex -= 1;
+			} else if (!(Character.isLetter(c.charAt(0)))) {
+				ui.throwWarning("Characters must be letters");
+				ui.displayBoard();
 				return false;
+			} else {
+				if (notifyServer && !singlePlayer) {
+					out.println(">> ADD LETTER " + c);
+				}
+				if (curGuess.length() == game.getMaxGuessSize()) {
+					ui.throwWarning("Already typed 5 letters");
+					ui.displayBoard();
+					return false;
+				}
+				curGuess += c;
+				charIndex += 1;
 			}
-			curGuess = curGuess.substring(0, curGuess.length() - 1); // take last char from string
-			charIndex -= 1;
-		} else if (!(Character.isLetter(c.charAt(0)))) {
-			ui.throwWarning("Characters must be letters");
+			game.addGuess(curGuess, curGuessIndex, charIndex);
+			ui.displayBoard();
 			return false;
 		} else {
-			if (curGuess.length() == game.getMaxGuessSize()) {
-				ui.throwWarning("Already typed 5 letters");
-				return false;
-			}
-			curGuess += c;
-			charIndex += 1;
+			ui.throwWarning("Not your turn!");
+			return true;
 		}
-		game.addGuess(curGuess, curGuessIndex, charIndex);
-		return false;
 	}
 
 	private void newGame() {
 		this.start();
 	}
-	
+
 	public boolean won() {
 		return won;
 	}
-	
+
 	public void getBotEvaluations() {
-		
+
 	}
 
 	public void restart() {
@@ -137,5 +168,38 @@ public class Controller {
 		FileWriter fr = new FileWriter(file, true);
 		fr.write(this.won + " " + (curGuessIndex + 1) + "\n");
 		fr.close();
+	}
+
+	class ServerReader implements Runnable {
+
+		@Override
+		public void run() {
+			while (true) {
+				if (in.hasNextLine()) {
+					var result = in.nextLine().replace("\n", "");
+					if (result.equals("<< YOUR TURN STARTS")) {
+						myTurn = true;
+						out.println(">> WORD: " + game.getAnswer());
+					} else if (result.equals("<< YOUR TURN ENDS")) {
+						myTurn = false;
+					} else if (result.startsWith("<< WORD:")) {
+						if (!game.getAnswer().equals(result.split(" ")[2])) {
+							System.out.println("UPDATED ANSWER: " + result.split(" ")[2]);
+							game.changeAnswer(result.split(" ")[2]);
+						}
+					} else if (result.equals("<< DELETE")) {
+						update(BACKSPACE, false);
+					} else if (result.equals("<< RESTART")) {
+						restart();// Don't really what else to do here
+					} else if (result.startsWith("<< SUBMIT")) {
+						update(ENTER, false);
+					} else if (result.startsWith("<< ADD LETTER ")) {
+						update(result.split(" ")[3], false);
+					} else {
+						System.out.println(result);
+					}
+				}
+			}
+		}
 	}
 }
