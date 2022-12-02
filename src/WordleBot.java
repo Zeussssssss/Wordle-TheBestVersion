@@ -75,13 +75,7 @@ public class WordleBot {
 				return;
 			}
 			possSolutions = wordsAfterGuess(possSolutions, readArrayRow(evaluation), guess);
-			HashMap<String, Float> optimalGuesses = findOptimalGuesses(possSolutions);
-			float maxEntropy = Collections.max(optimalGuesses.values());
-			for (String possGuess: optimalGuesses.keySet()) {
-				if (optimalGuesses.get(possGuess) == maxEntropy) {
-					guess = possGuess;
-				}
-			}
+			guess = findOptimalGuess(possSolutions);
 		}
 		
 	}
@@ -272,6 +266,18 @@ public class WordleBot {
 		optimal.put("arose", 5.7f);
 		optimal.put("least", 5.7f);
 		return optimal;
+	}
+	
+	private static String findOptimalGuess(HashSet<String> possSolutions) {
+		String guess = "";
+		HashMap<String, Float> optimalGuesses = findOptimalGuesses(possSolutions);
+		float maxEntropy = Collections.max(optimalGuesses.values());
+		for (String possGuess: optimalGuesses.keySet()) {
+			if (optimalGuesses.get(possGuess) == maxEntropy) {
+				guess = possGuess;
+			}
+		}
+		return guess;
 	}
 	
 	private static HashMap<String, Float> findOptimalGuesses(HashSet<String> possSolutions) {
