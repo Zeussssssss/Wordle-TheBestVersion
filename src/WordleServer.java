@@ -97,11 +97,11 @@ public class WordleServer implements Runnable {
 				} else if (command.startsWith(">> SUBMIT")) { // Enter pressed
 					if (you.getTeamMate() != null)
 						you.getTeamMate().getOutput().println("<< SUBMIT" + command.split(" ")[2]);
-					if (command.split(" ")[2].equals("CORRECT")) {
+					else if (command.split(" ")[2].equals("CORRECT")) {
 						switchCurrentPlayer();
 						you.getOutput().println("<< YOUR TURN ENDS");
 					}
-					if (you.getTeamMate() != null)
+					else if (you.getTeamMate() != null)
 						you.getTeamMate().getOutput().println("<< YOUR TURN STARTS");
 				} else if (command.equals(">> DELETE")) {
 					if (you.getTeamMate() != null)

@@ -90,6 +90,7 @@ public class Controller {
 					}
 					return true;
 				}
+
 				if (notifyServer && !singlePlayer) {
 					out.println(">> SUBMIT CORRECT");
 				}

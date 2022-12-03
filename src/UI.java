@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.*;
-import java.util.List;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -308,13 +306,11 @@ public class UI {
 		if (type.equals("right")) {
 			int delay = 500;
 			for (int x = 0; x < 5; x++) {
-				long time1 = System.currentTimeMillis();
 				TimerTask Anim = new Animate(rowIdx, x, time);
 				time.schedule(Anim, delay * x, 10);
 			}
 		} else {
 			for (int x = 0; x < 5; x++) {
-				long time1 = System.currentTimeMillis();
 				TimerTask Anim = new Shake(rowIdx, x, time);
 				time.schedule(Anim, 0, 10);
 			}
