@@ -11,6 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.*;
 import java.util.List;
@@ -323,6 +324,12 @@ public class UI {
 	public void endGame() {
 		gameOver = true;
 		state.setText("G A M E   O V E R !");
+		try {
+			controller.saveGame();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void playMusic(String path) {
@@ -414,7 +421,7 @@ public class UI {
 	public void displayStats() {
 		// Array format
 		// Played,Won,CurrStreak,HighestStreal,1guess,2guess,3guess,4guess,5guess,6guess
-		int arr[] = { 15, 13, 4, 7, 2, 1, 2, 2, 3, 1 };
+		int arr[] = controller.load();
 		// Alter for change in Statistics
 		if (controller.won())
 			playMusic("Win.wav");
