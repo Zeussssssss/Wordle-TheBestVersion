@@ -25,15 +25,15 @@ class GuessEvaluator {
 	private static void readAllowedGuesses() throws FileNotFoundException {
 		allowedGuesses = new HashSet<String>();
 		Scanner scannerGuesses = new Scanner(new File(ENGLISH_GUESSES));
-        while (scannerGuesses.hasNext()) {
-            String s = scannerGuesses.nextLine();
-            allowedGuesses.add(s.toLowerCase());
-        }
-        Scanner scannerAnswers = new Scanner(new File(ENGLISH_ANSWERS));
-        while (scannerAnswers.hasNext()) {
-            String s = scannerAnswers.nextLine();
-            allowedGuesses.add(s.toLowerCase());
-        }
+		while (scannerGuesses.hasNext()) {
+			String s = scannerGuesses.nextLine();
+			allowedGuesses.add(s.toLowerCase());
+		}
+		Scanner scannerAnswers = new Scanner(new File(ENGLISH_ANSWERS));
+		while (scannerAnswers.hasNext()) {
+			String s = scannerAnswers.nextLine();
+			allowedGuesses.add(s.toLowerCase());
+		}
 	}
 
 	public boolean isInVocabulary(String word) {
@@ -52,19 +52,20 @@ class GuessEvaluator {
 		}
 
 		HashMap<Integer, String> evaluation = new HashMap<Integer, String>();
-		
-		// first loop checks for correct guesses and decrements that letter from the frequency dictionary
+
+		// first loop checks for correct guesses and decrements that letter from the
+		// frequency dictionary
 		for (int i = 0; i < wordSize; i++) {
 			char curLetter = guess.charAt(i);
 			char corLetter = answer.charAt(i);
 
 			if (curLetter == corLetter) {
 				evaluation.put(i, CORRECT);
-				frequency.put(String.valueOf(corLetter), frequency.get(String.valueOf(corLetter))-1);
+				frequency.put(String.valueOf(corLetter), frequency.get(String.valueOf(corLetter)) - 1);
 			} else if (!(answer.contains(String.valueOf(curLetter)))) {
 				evaluation.put(i, ABSENT);
 			}
-		} 
+		}
 
 		// second loop checks for present letters and handles words with double letters
 		for (int i = 0; i < wordSize; i++) {
@@ -72,7 +73,7 @@ class GuessEvaluator {
 			if (!(evaluation.containsKey(i))) {
 				if (removeCorrect(evaluation, answer).contains(curLetter) && frequency.get(curLetter) > 0) {
 					evaluation.put(i, PRESENT);
-					frequency.put(curLetter, frequency.get(curLetter)-1);
+					frequency.put(curLetter, frequency.get(curLetter) - 1);
 				} else {
 					evaluation.put(i, ABSENT);
 				}
@@ -103,6 +104,5 @@ class GuessEvaluator {
 		}
 		return newAnswer;
 	}
-
 
 }
