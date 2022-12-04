@@ -21,29 +21,28 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 
 public class UI {
-
-	private static String mode;
-	private static Controller controller;
-	private static JFrame frame;
-	private static boolean freeze, gameOver;
-	private static JLabel[][] grid;
-	private static JPanel panel;
-	private static JLabel state, box, swtch;
-	private static final String WORDLE = "WORDLE";
-	private static final String BACKSPACE = "BACKSPACE";
-	private static final String ENTER = "ENTER";
-	private static final int GAME_FONTSIZE = 35;
-	private static Font globalFont;
-	private static final Font displayFont = new Font("Helvetica", Font.BOLD, GAME_FONTSIZE);
-	private static int xPadding, yPadding, xBoxDist, yBoxDist, labelSize, height, width, buttonPaddingX, buttonPaddingY;
-	private static final Color BLACK = new Color(40, 40, 40);
-	private static final Color WHITE = new Color(220, 220, 215);
-	private static final Color GREEN = new Color(16, 176, 52);
-	private static final Color YELLOW = new Color(204, 172, 8);
-	private static final Color DARK_GRAY = Color.DARK_GRAY;
-	private static final Color LIGHT_GRAY = Color.LIGHT_GRAY;
-	private static Color labelBack, labelFore, panelCol;
-	private static final Map<String, Color> colorEvaluationMap = Map.of("c", GREEN, "p", YELLOW, "a", DARK_GRAY);
+	private String mode;
+	private Controller controller;
+	private JFrame frame,mainFrame;
+	private boolean freeze, gameOver;
+	private JLabel[][] grid;
+	private JPanel panel;
+	private JLabel state, box, swtch;
+	private final String WORDLE = "WORDLE";
+	private final String BACKSPACE = "BACKSPACE";
+	private final String ENTER = "ENTER";
+	private final int GAME_FONTSIZE = 35;
+	private Font globalFont;
+	private final Font displayFont = new Font("Helvetica", Font.BOLD, GAME_FONTSIZE);
+	private int xPadding, yPadding, xBoxDist, yBoxDist, labelSize, height, width, buttonPaddingX, buttonPaddingY;
+	private final Color BLACK = new Color(40, 40, 40);
+	private final Color WHITE = new Color(220, 220, 215);
+	private final Color GREEN = new Color(16, 176, 52);
+	private final Color YELLOW = new Color(204, 172, 8);
+	private final Color DARK_GRAY = Color.DARK_GRAY;
+	private final Color LIGHT_GRAY = Color.LIGHT_GRAY;
+	private Color labelBack, labelFore, panelCol;
+	private final Map<String, Color> colorEvaluationMap = Map.of("c", GREEN, "p", YELLOW, "a", DARK_GRAY);
 	private Map<JLabel, Color> keys;
 	private char keyboard[][] = { { 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' },
 			{ 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L' }, { 'Z', 'X', 'C', 'V', 'B', 'N', 'M' } };
@@ -104,17 +103,17 @@ public class UI {
 	public void start() {
 
 		// Creating main frame
-		frame = new JFrame(WORDLE);
-		frame.setLayout(null);
+		mainFrame = new JFrame(WORDLE);
+		mainFrame.setLayout(null);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.setBounds((int) ((screenSize.getWidth() - width) / 2), (int) (screenSize.getHeight() * 0.1 / 2) - 10,
+		mainFrame.setBounds((int) ((screenSize.getWidth() - width) / 2), (int) (screenSize.getHeight() * 0.1 / 2) - 10,
 				width, height);
 //		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		frame.setVisible(true);
+		mainFrame.setVisible(true);
 
 		// Creating panel to add all labels and graphic elements
 		panel = new JPanel();
-		frame.getContentPane().add(panel);
+		mainFrame.getContentPane().add(panel);
 		panel.setLayout(null);
 		panel.setBounds(0, 0, width, height);
 
@@ -159,20 +158,16 @@ public class UI {
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
-			}
+			public void mousePressed(MouseEvent e) {}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
+			public void mouseReleased(MouseEvent e) {}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
+			public void mouseEntered(MouseEvent e) {}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
-			}
+			public void mouseExited(MouseEvent e) {}
 		});
 
 		for (int i = 0; i < 6; i++) {
@@ -247,7 +242,7 @@ public class UI {
 		displayBoard();
 
 		// Adding the KeyListener to frame
-		frame.addKeyListener(new KeyListener() {
+		mainFrame.addKeyListener(new KeyListener() {
 			boolean animation = false;
 
 			@Override
@@ -340,6 +335,11 @@ public class UI {
 			e.printStackTrace();
 		}
 	}
+	public void disposeFrames() {
+		System.out.println("!!!!!!!Trying to CLOSE FRAMES!!!!!!!!");
+		mainFrame.dispose();
+		frame.dispose();
+	}
 
 	public void toggleMode() {
 		playMusic("switch.wav");
@@ -425,7 +425,7 @@ public class UI {
 			playMusic("Lose.wav");
 
 		int x = (int) (0.8 * height);
-		JFrame frame = new JFrame("STATS");
+		frame = new JFrame("STATS");
 		frame.setBounds(500, 100, x, x);
 		JPanel jp = new JPanel();
 		frame.getContentPane().add(jp);
@@ -497,7 +497,7 @@ public class UI {
 			percent.setVisible(true);
 			JLabel greenBar = new JLabel("");
 			greenBar.setBounds((x / 10 + x / 15 + 10), (x / 15) + (10 + x / 15) * y, 0, x / 15);
-			greenBar.setBackground(Color.green);
+			greenBar.setBackground(GREEN.brighter());
 			greenBar.setOpaque(true);
 			jp.add(greenBar);
 
@@ -510,10 +510,62 @@ public class UI {
 			Timer t = new Timer();
 			long time1 = System.currentTimeMillis();
 			TimerTask Anim = new BarAnim(greenBar, width, t);
-			t.schedule(Anim, 500 + (int) (1.1 * currWait), 10);
-			currWait += (width * 10);
+			t.schedule(Anim, 500 + (int) (1 * currWait), 10);
+			currWait += (width * 11);
 		}
+		
+		JLabel restart = new JLabel("RESTART", SwingConstants.CENTER);
+		restart.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
+		restart.setBounds(x/4,x-x/6,x/4-5,x/16);
+		restart.setForeground(labelFore);
+		restart.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		restart.setBackground(new Color(170,0,0));
+		restart.setOpaque(true);
+		jp.add(restart);
+		JLabel wordleBot = new JLabel("WORDLE BOT", SwingConstants.CENTER);
+		wordleBot.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
+		wordleBot.setBounds(x/2+5,x-x/6,x/4-5,x/16);
+		wordleBot.setForeground(labelFore);
+		wordleBot.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		wordleBot.setBackground(GREEN.darker());
+		wordleBot.setOpaque(true);
+		jp.add(wordleBot);
+		
 		jp.repaint();
+		
+		restart.addMouseListener(new MouseListener()
+				{
+
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						controller.restart();
+					}
+
+					@Override
+					public void mousePressed(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mouseExited(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+			
+				});
 	}
 
 	class BarAnim extends TimerTask {
