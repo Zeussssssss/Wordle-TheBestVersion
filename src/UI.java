@@ -23,7 +23,7 @@ import javax.swing.border.BevelBorder;
 public class UI {
 	private String mode;
 	private Controller controller;
-	private JFrame frame,mainFrame;
+	private JFrame frame, mainFrame;
 	private boolean freeze, gameOver;
 	private JLabel[][] grid;
 	private JPanel panel;
@@ -103,6 +103,8 @@ public class UI {
 	public void start() {
 
 		// Creating main frame
+		freeze = false; 
+		gameOver = false;
 		mainFrame = new JFrame(WORDLE);
 		mainFrame.setLayout(null);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -158,16 +160,20 @@ public class UI {
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
 
 		for (int i = 0; i < 6; i++) {
@@ -323,6 +329,13 @@ public class UI {
 		}
 	}
 
+//	public void restart() {
+//		freeze = false;
+//		gameOver = false;
+//		mainFrame.dispose();
+//		start();
+//	}
+
 	public void playMusic(String path) {
 		path = "Resources/" + path;
 		try {
@@ -335,6 +348,7 @@ public class UI {
 			e.printStackTrace();
 		}
 	}
+
 	public void disposeFrames() {
 		System.out.println("!!!!!!!Trying to CLOSE FRAMES!!!!!!!!");
 		mainFrame.dispose();
@@ -475,7 +489,6 @@ public class UI {
 			name.setForeground(labelFore);
 			jp.add(name);
 		}
-
 		frame.setVisible(true);
 		int currWait = 0;
 		for (int y = 1; y <= 6; y++) {
@@ -513,59 +526,58 @@ public class UI {
 			t.schedule(Anim, 500 + (int) (1 * currWait), 10);
 			currWait += (width * 11);
 		}
-		
+
 		JLabel restart = new JLabel("RESTART", SwingConstants.CENTER);
 		restart.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
-		restart.setBounds(x/4,x-x/6,x/4-5,x/16);
+		restart.setBounds(x / 4, x - x / 6, x / 4 - 5, x / 16);
 		restart.setForeground(labelFore);
 		restart.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		restart.setBackground(new Color(170,0,0));
+		restart.setBackground(new Color(170, 0, 0));
 		restart.setOpaque(true);
 		jp.add(restart);
 		JLabel wordleBot = new JLabel("WORDLE BOT", SwingConstants.CENTER);
 		wordleBot.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
-		wordleBot.setBounds(x/2+5,x-x/6,x/4-5,x/16);
+		wordleBot.setBounds(x / 2 + 5, x - x / 6, x / 4 - 5, x / 16);
 		wordleBot.setForeground(labelFore);
 		wordleBot.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		wordleBot.setBackground(GREEN.darker());
 		wordleBot.setOpaque(true);
 		jp.add(wordleBot);
-		
+
 		jp.repaint();
-		
-		restart.addMouseListener(new MouseListener()
-				{
 
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						controller.restart();
-					}
+		restart.addMouseListener(new MouseListener() {
 
-					@Override
-					public void mousePressed(MouseEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				controller.restart(true, "");
+			}
 
-					@Override
-					public void mouseReleased(MouseEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
 
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
+			}
 
-					@Override
-					public void mouseExited(MouseEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
-			
-				});
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
 	}
 
 	class BarAnim extends TimerTask {

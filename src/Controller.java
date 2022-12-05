@@ -158,18 +158,25 @@ public class Controller {
 
 	}
 
-	public void restart() {
+	public void restart(boolean notifyServer, String word) {
+		ui.disposeFrames();
 		game.init();
-		// guessEvaluator = new GuessEvaluator();
+		guessEvaluator = new GuessEvaluator();
 		init();
-		// this.start();
+		this.start();
+		if (!singlePlayer && notifyServer)
+			out.println(">> RESTART " + game.getAnswer());
+		else if (!singlePlayer && !notifyServer) {
+			System.out.println("UPDATED ANSWER: " + word);
+			game.changeAnswer(word);
+		}
 	}
-	
+
 	public int[] load() {
 		// Played,Won,CurrStreak,HighestStreal,1guess,2guess,3guess,4guess,5guess,6guess
-		int[] ret = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		int[] ret = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		File file = new File("data.txt");
-	      Scanner myReader = null;
+		Scanner myReader = null;
 		try {
 			myReader = new Scanner(file);
 		} catch (FileNotFoundException e) {
@@ -177,54 +184,53 @@ public class Controller {
 		}
 		ArrayList<Boolean> games = new ArrayList<Boolean>();
 		int won = 0;
-	      while (myReader.hasNextLine()) {
-	        String line = myReader.nextLine();
-	        String[] data = line.split(" ");
-	        if(data[0].equals("true")) {
-	        	won++;
-	        	games.add(true);
-	        }
-	        else {
-	        	games.add(false);
-	        }
-	        if(data[1].equals("1")) {
-	        	ret[4]++;
-	        } else if(data[1].equals("2")) {
-	        	ret[5]++;
-	        } else if(data[1].equals("3")) {
-	        	ret[6]++;
-	        } else if(data[1].equals("4")) {
-	        	ret[7]++;
-	        } else if(data[1].equals("5")) {
-	        	ret[8]++;
-	        } else if(data[1].equals("6") && data[0].equals("true")) {
-	        	ret[9]++;
-	        }
-	      }
-	      myReader.close();
-	      ret[1] = won;
-	      ret[0] = games.size();
-	      int curStreak = 0;
-	      int high = 0;
-	      int i = 0;
-	      for (boolean b: games) {
-	    	  System.out.println(b);
-	    	  if(b == false) {
-	    		  if(high < i) {
-	    			  high = i;
-	    		  }
-	    		  i = 0;
-	    	  }
-	    	  i++;
-	      }
-	      curStreak = i;
-	      if(curStreak > high)
-	    	  high = curStreak;
-	      ret[2] = curStreak;
-	      ret[3] = high;
-	      return ret;
+		while (myReader.hasNextLine()) {
+			String line = myReader.nextLine();
+			String[] data = line.split(" ");
+			if (data[0].equals("true")) {
+				won++;
+				games.add(true);
+			} else {
+				games.add(false);
+			}
+			if (data[1].equals("1")) {
+				ret[4]++;
+			} else if (data[1].equals("2")) {
+				ret[5]++;
+			} else if (data[1].equals("3")) {
+				ret[6]++;
+			} else if (data[1].equals("4")) {
+				ret[7]++;
+			} else if (data[1].equals("5")) {
+				ret[8]++;
+			} else if (data[1].equals("6") && data[0].equals("true")) {
+				ret[9]++;
+			}
+		}
+		myReader.close();
+		ret[1] = won;
+		ret[0] = games.size();
+		int curStreak = 0;
+		int high = 0;
+		int i = 0;
+		for (boolean b : games) {
+			System.out.println(b);
+			if (b == false) {
+				if (high < i) {
+					high = i;
+				}
+				i = 0;
+			}
+			i++;
+		}
+		curStreak = i;
+		if (curStreak > high)
+			high = curStreak;
+		ret[2] = curStreak;
+		ret[3] = high;
+		return ret;
 	}
-	
+
 	public void saveGame() throws IOException {
 
 		File file = new File("data.txt");
@@ -252,8 +258,8 @@ public class Controller {
 						}
 					} else if (result.equals("<< DELETE")) {
 						update(BACKSPACE, false);
-					} else if (result.equals("<< RESTART")) {
-						restart();// Don't really what else to do here
+					} else if (result.startsWith("<< RESTART")) {
+						restart(false, result.split(" ")[2]);
 					} else if (result.startsWith("<< SUBMIT")) {
 						update(ENTER, false);
 					} else if (result.startsWith("<< ADD LETTER ")) {
