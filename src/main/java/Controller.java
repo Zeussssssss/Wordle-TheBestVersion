@@ -6,6 +6,9 @@
  *
  * Description: This is the Controller class. It handles all the back end operation. 
  */
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -196,6 +199,18 @@ public class Controller {
 			game.changeAnswer(word);
 		}
 	}
+	
+	public void clipboard() {
+		String myString = "Today's word was " + game.getAnswer();
+		if (this.won) {
+			myString += ". I guessed it in " + (curGuessIndex + 1) + " attempts.";
+		} else {
+			myString += ". I could not guess it :((";
+		}
+		StringSelection stringSelection = new StringSelection(myString);
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(stringSelection, null);
+	}
 
 	public int[] load() {
 		// Played,Won,CurrStreak,HighestStreak,1guess,2guess,3guess,4guess,5guess,6guess
@@ -240,7 +255,6 @@ public class Controller {
 		int high = 0;
 		int i = 0;
 		for (boolean b : games) {
-			System.out.println(b);
 			if (b == false) {
 				if (high < i) {
 					high = i;
