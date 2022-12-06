@@ -33,6 +33,7 @@ public class Controller {
 	private WordleGame game;
 	private UI ui;
 	private String name;
+	private String serverAddress;
 	private static String curGuess;
 	private static GuessEvaluator guessEvaluator;
 	private static int curGuessIndex;
@@ -67,6 +68,7 @@ public class Controller {
 		singlePlayer = single;
 		collection = coll;
 		this.name = name;
+		this.serverAddress = serverAdd;
 		if (!singlePlayer) {
 			try {
 				System.out.println(serverAdd);
@@ -93,7 +95,7 @@ public class Controller {
 
 	public void start() {
 		// start the UI
-		ui.start();
+		ui.start(this.serverAddress);
 	}
 
 	public WordleGame getGame() {

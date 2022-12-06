@@ -26,7 +26,7 @@ public class UI {
 	private JFrame frame, mainFrame;
 	private boolean freeze, gameOver;
 	private JLabel[][] grid;
-	private JPanel panel;
+	private JPanel panel,pseudoPanel;
 	private JLabel state, box, swtch;
 	private final String WORDLE = "WORDLE";
 	private final String BACKSPACE = "BACKSPACE";
@@ -100,7 +100,7 @@ public class UI {
 		}
 	}
 
-	public void start() {
+	public void start(String server) {
 
 		// Creating main frame
 		freeze = false; 
@@ -110,22 +110,27 @@ public class UI {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		mainFrame.setBounds((int) ((screenSize.getWidth() - width) / 2), (int) (screenSize.getHeight() * 0.1 / 2) - 10,
 				width, height);
-//		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		mainFrame.setVisible(true);
 
 		// Creating panel to add all labels and graphic elements
 		panel = new JPanel();
+		pseudoPanel = new JPanel();
+		mainFrame.getContentPane().add(pseudoPanel);
 		mainFrame.getContentPane().add(panel);
 		panel.setLayout(null);
 		panel.setBounds(0, 0, width, height);
-
+		pseudoPanel.setBounds(0, 0, width, height);
+		pseudoPanel.setOpaque(false);
+		panel.setVisible(true);
 		// Creating Label for game state
 		state = new JLabel("WORDLE", SwingConstants.CENTER);
 		state.setFont(globalFont);
 		state.setBounds(0, 0, width, (int) (height * 0.1));
 		state.setForeground(labelFore);
 		panel.add(state);
-
+		if(server!="") {
+			new PopUp("Server copied to clipboard", panel);
+		}
 		panel.setBackground(labelBack);
 		// Adding Toggle
 		box = new JLabel("LIGHT    DARK", SwingConstants.CENTER);
@@ -297,7 +302,8 @@ public class UI {
 	}
 
 	public void throwWarning(String msg) {
-		state.setText(msg);
+		//state.setText(msg);
+		new PopUp(msg,pseudoPanel);
 	}
 
 	public void animateRow(int rowIdx, String type) {
@@ -529,7 +535,7 @@ public class UI {
 
 		JLabel restart = new JLabel("RESTART", SwingConstants.CENTER);
 		restart.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
-		restart.setBounds(x / 4, x - x / 6, x / 4 - 5, x / 16);
+		restart.setBounds(x / 4, x - x / 5, x / 4 - 5, x / 16);
 		restart.setForeground(labelFore);
 		restart.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		restart.setBackground(new Color(170, 0, 0));
