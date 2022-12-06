@@ -1,4 +1,3 @@
-
 /**
  * File: Controller.java
  * Assignment: CSC335PA3
@@ -284,6 +283,10 @@ public class Controller {
 		FileWriter fr = new FileWriter(file, true);
 		fr.write(this.won + " " + (curGuessIndex + 1) + "\n");
 		fr.close();
+	}
+	
+	public int getCurrGuessInd() {
+		return curGuessIndex;
 	}
 
 	class ServerReader implements Runnable {

@@ -537,46 +537,88 @@ public class UI {
 		jp.add(restart);
 		JLabel wordleBot = new JLabel("WORDLE BOT", SwingConstants.CENTER);
 		wordleBot.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
-		wordleBot.setBounds(x / 2 + 5, x - x / 6, x / 4 - 5, x / 16);
+		wordleBot.setBounds(x/2+5,x-x/5,x/4-5,x/16);
 		wordleBot.setForeground(labelFore);
 		wordleBot.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		wordleBot.setBackground(GREEN.darker());
 		wordleBot.setOpaque(true);
 		jp.add(wordleBot);
-
+		JLabel share = new JLabel("SHARE", SwingConstants.CENTER);
+		share.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
+		share.setBounds(x/4,x-x/5+x/16+10,x/4-5,x/16);
+		share.setForeground(labelFore);
+		share.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		share.setBackground(new Color(0,170,170));
+		share.setOpaque(true);
+		jp.add(share);
+		JLabel leaderBoard = new JLabel("LEADERBOARD", SwingConstants.CENTER);
+		leaderBoard.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
+		leaderBoard.setBounds(x/2+5,x-x/5+x/16+10,x/4-5,x/16);
+		leaderBoard.setForeground(labelFore);
+		leaderBoard.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		leaderBoard.setBackground(new Color(170,170,0));
+		leaderBoard.setOpaque(true);
+		jp.add(leaderBoard);
+		
 		jp.repaint();
 
-		restart.addMouseListener(new MouseListener() {
-
+		wordleBot.addMouseListener(new MouseListener()
+		{
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				BotDisplay bd = new BotDisplay(height, controller, labelFore, labelBack);
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+		});
+		restart.addMouseListener(new MouseListener()
+		{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				controller.restart(true, "");
 			}
-
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
+			public void mousePressed(MouseEvent e) {}
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
+			public void mouseReleased(MouseEvent e) {}
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
+			public void mouseEntered(MouseEvent e) {}
 			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-
+			public void mouseExited(MouseEvent e) {}
+		});
+		share.addMouseListener(new MouseListener()
+		{
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				controller.clipboard();
 			}
-
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+		});
+		leaderBoard.addMouseListener(new MouseListener()
+		{
+			@Override
+			public void mouseClicked(MouseEvent e) {}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
 		});
 	}
 
