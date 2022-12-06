@@ -21,10 +21,9 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 
 public class UI {
-	
 	private String mode;
 	private Controller controller;
-	private JFrame frame,mainFrame;
+	private JFrame frame, mainFrame;
 	private boolean freeze, gameOver;
 	private JLabel[][] grid;
 	private JPanel panel;
@@ -104,6 +103,8 @@ public class UI {
 	public void start() {
 
 		// Creating main frame
+		freeze = false; 
+		gameOver = false;
 		mainFrame = new JFrame(WORDLE);
 		mainFrame.setLayout(null);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -159,16 +160,20 @@ public class UI {
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
 
 		for (int i = 0; i < 6; i++) {
@@ -318,10 +323,18 @@ public class UI {
 		state.setText("G A M E   O V E R !");
 		try {
 			controller.saveGame();
-		} catch (IOException e) { 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
+//	public void restart() {
+//		freeze = false;
+//		gameOver = false;
+//		mainFrame.dispose();
+//		start();
+//	}
 
 	public void playMusic(String path) {
 		path = "Resources/" + path;
@@ -335,6 +348,7 @@ public class UI {
 			e.printStackTrace();
 		}
 	}
+
 	public void disposeFrames() {
 		System.out.println("!!!!!!!Trying to CLOSE FRAMES!!!!!!!!");
 		mainFrame.dispose();
@@ -426,7 +440,7 @@ public class UI {
 
 		int x = (int) (0.8 * height);
 		frame = new JFrame("STATS");
-		frame.setBounds(500, 100, x, x+10);
+		frame.setBounds(500, 100, x, x);
 		JPanel jp = new JPanel();
 		frame.getContentPane().add(jp);
 		frame.setLayout(null);
@@ -475,7 +489,6 @@ public class UI {
 			name.setForeground(labelFore);
 			jp.add(name);
 		}
-
 		frame.setVisible(true);
 		int currWait = 0;
 		for (int y = 1; y <= 6; y++) {
@@ -508,17 +521,18 @@ public class UI {
 			jp.add(grayBar);
 
 			Timer t = new Timer();
+			long time1 = System.currentTimeMillis();
 			TimerTask Anim = new BarAnim(greenBar, width, t);
 			t.schedule(Anim, 500 + (int) (1 * currWait), 10);
 			currWait += (width * 11);
 		}
-		
+
 		JLabel restart = new JLabel("RESTART", SwingConstants.CENTER);
 		restart.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
-		restart.setBounds(x/4,x-x/5,x/4-5,x/16);
+		restart.setBounds(x / 4, x - x / 6, x / 4 - 5, x / 16);
 		restart.setForeground(labelFore);
 		restart.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		restart.setBackground(new Color(170,0,0));
+		restart.setBackground(new Color(170, 0, 0));
 		restart.setOpaque(true);
 		jp.add(restart);
 		JLabel wordleBot = new JLabel("WORDLE BOT", SwingConstants.CENTER);
@@ -547,7 +561,7 @@ public class UI {
 		jp.add(leaderBoard);
 		
 		jp.repaint();
-		
+
 		wordleBot.addMouseListener(new MouseListener()
 		{
 			@Override
@@ -567,7 +581,7 @@ public class UI {
 		{
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				controller.restart();
+				controller.restart(true, "");
 			}
 			@Override
 			public void mousePressed(MouseEvent e) {}
@@ -581,7 +595,9 @@ public class UI {
 		share.addMouseListener(new MouseListener()
 		{
 			@Override
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {
+				controller.clipboard();
+			}
 			@Override
 			public void mousePressed(MouseEvent e) {}
 			@Override
@@ -605,7 +621,7 @@ public class UI {
 			public void mouseExited(MouseEvent e) {}
 		});
 	}
-	
+
 	class BarAnim extends TimerTask {
 		Timer timer;
 		int x;
