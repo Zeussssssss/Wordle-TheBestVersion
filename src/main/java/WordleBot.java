@@ -60,13 +60,17 @@ public class WordleBot {
 	 * 		"skill": "99"
 	 * 		},
 	 * 	"optimal_2": {
+	 *		<data>
 	 * 		},
 	 * 	"optimal_10": {
+	 *		<data>
 	 * 		}
 	 * 	},
 	 * 2: {
+	 *	<data>
 	 *	},
 	 * 6: {
+	 *	<data>
 	 * 	},
 	 * }
 	 * 
