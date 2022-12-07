@@ -183,8 +183,18 @@ public class Controller {
 		return won;
 	}
 
-	public void getBotEvaluations() {
-
+	public String[] getLeaderBoard() {
+		FindIterable<Document> iterDoc = collection.find().sort(Sorts.descending("Score"));
+		MongoCursor<Document> it = iterDoc.iterator();
+		int i = 0;
+		String arr[] = new String[10];
+		while (i < 10) {
+			Document curr = it.next();
+			arr[i] = curr.getString("PlayerName");
+			arr[i+1] = Integer.toString(curr.getInteger("Score"));
+			i+=2;
+		}
+		return arr;
 	}
 
 	public void restart(boolean notifyServer, String word) {

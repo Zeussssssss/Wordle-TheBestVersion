@@ -616,7 +616,10 @@ public class UI {
 		leaderBoard.addMouseListener(new MouseListener()
 		{
 			@Override
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {
+				String arr[] = controller.getLeaderBoard();
+				new LeaderBoard(arr,labelFore,labelBack,mode);
+			}
 			@Override
 			public void mousePressed(MouseEvent e) {}
 			@Override
