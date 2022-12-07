@@ -1,6 +1,14 @@
+/**
+ * File: Controller.java
+ * Assignment: CSC335PA3
+ * @author Cezar Rata
+ * 
+ * Description: This is the WordleBot class. It contains functionality to evaluate how good the players skill were 
+ * as well as play a game optimally.
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,12 +43,61 @@ public class WordleBot {
 		}
 	};
 	
+	/**
+	 * Returns the bots evaluations of the players guesses
+	 * The data is stored in a map structured with the following schema:
+	 * {
+	 * 1 : {
+	 * 	"player": {
+	 * 		"guess": "least",
+	 * 		"entropy": "4.8",
+	 * 		"skill": "99",
+	 * 		"solutions_after_guess": "293'
+	 * 		},
+	 * 	"optimal_1": {
+	 * 		"word": "slate",
+	 * 		"entropy": "4.8",
+	 * 		"skill": "99"
+	 * 		},
+	 * 	"optimal_2": {
+	 * 		},
+	 * 	"optimal_10": {
+	 * 		}
+	 * 	},
+	 * 2: {
+	 *	},
+	 * 6: {
+	 * 	},
+	 * }
+	 * 
+	 * Each integer key represents the guess number. 
+	 * Inside inside that hashmap, the player key represents player data for that guess.
+	 * The optimal_n key represents the data for the nth best guess after the players guess, up to the 10th best.
+	 * @return
+	 */
 	public HashMap<Integer, HashMap<String, HashMap<String, String>>> getBotGuessEvaluations() { return botGuessEvaluations; } 
 	
+	/**
+	 * Returns the 2D array of optimal guesses
+	 * @return
+	 */
 	public String[][] getOptimalGuesses() { return optimalGuesses; }
 	
+	/**
+	 * Returns the 2D array of the evaluations for the optimal guesses
+	 * @return
+	 */
 	public String[][] getOptimalGuessesEvaluations() { return optimalGuessesEvaluations; }
 	
+	/**
+	 * Calls the prettyPrint() function
+	 */
+	public void pprint() { prettyPrint(); }
+	
+	/**
+	 * Returns the average skill for the player that game
+	 * @return
+	 */
 	public float getAverageSkill() {
 		int totalSkill = 0;
 		for (int guessIdx: botGuessEvaluations.keySet()) {
@@ -49,6 +106,10 @@ public class WordleBot {
 		return totalSkill / botGuessEvaluations.size();	
 	}
 	
+	/**
+	 * Reads the file containing words it can use to guess with
+	 * @throws FileNotFoundException
+	 */
 	private static void readCorpus() throws FileNotFoundException {
 		corpus = new HashSet<String>();
 		Scanner scanner = new Scanner(new File(ENGLISH_ANSWERS));
@@ -58,6 +119,10 @@ public class WordleBot {
         }
 	}
 	
+	/**
+	 * Plays a game of wordle optimally
+	 * @param game
+	 */
 	public void play(WordleGame game) {
 		String answer = game.getAnswer();
 		String guess = FIRSTGUESS;
@@ -77,9 +142,12 @@ public class WordleBot {
 			possSolutions = wordsAfterGuess(possSolutions, readArrayRow(evaluation), guess);
 			guess = findOptimalGuess(possSolutions);
 		}
-		
 	}
 	
+	/**
+	 * Evalautes the players skill based on their guesses
+	 * @param game
+	 */
 	public void evaluate(WordleGame game) {
 		String[][] guesses = game.getGuesses();
 		String[][] evaluations = game.getGuessEvaluations();
@@ -121,14 +189,20 @@ public class WordleBot {
 			botGuessEvaluations.put(i + 1, guessData);
 			
 		}
-		System.out.println("Math Page Structure:\n");
-		prettyPrint();
+//		System.out.println("Math Page Structure:\n");
+//		prettyPrint();
 	}
 	
-	private static float roundToTens(float n) {
-		return (float) Math.round(n * 10) / 10;
-	}
+	/**
+	 * Rounds a float to the 10s decimal
+	 * @param n
+	 * @return
+	 */
+	private static float roundToTens(float n) { return (float) Math.round(n * 10) / 10; }
 	
+	/**
+	 * Prints the guess evaluations in a readable manner
+	 */
 	private static void prettyPrint() {
 		for (int guess: botGuessEvaluations.keySet()) {
 			System.out.println(guess + ": {");
@@ -156,17 +230,21 @@ public class WordleBot {
 		}
 	}
 	
-	public void pprint() {
-		prettyPrint();
-	}
-	
+	/**
+	 * Returns the skill of a guess based on the entropy of that word
+	 * Uses a scaling function based on the minimum and maximum entropy of all possible guesses to calculate skill
+	 * @param entropy
+	 * @param optimalGuesses
+	 * @param guessIdx
+	 * @return
+	 */
 	private static int getGuessSkill(float entropy, HashMap<String, Float> optimalGuesses, Integer guessIdx) {
 		float minEntropy = Collections.min(optimalGuesses.values());
 		float maxEntropy = Collections.max(optimalGuesses.values());
 		if (guessIdx == 0) {
 			return (int) ((entropy / maxEntropy) * 99);
 		}
-		if (minEntropy == maxEntropy) {
+		if (minEntropy == maxEntropy ) {
 			if (entropy < minEntropy) {
 				return 0;
 			} else {
@@ -176,6 +254,13 @@ public class WordleBot {
 		return Math.max((int) ((entropy-minEntropy)/(maxEntropy-minEntropy) * 99), 0);
 	}
 	
+	/**
+	 * Returns a new array of words based on the guess evaluation of the previous guess
+	 * @param possSolutions
+	 * @param evaluation
+	 * @param guess
+	 * @return
+	 */
 	private static HashSet<String> wordsAfterGuess(HashSet<String> possSolutions, String evaluation, String guess) {
 		HashSet<String> newPossSolutions = new HashSet<String>();
 		for (String word: possSolutions) {
@@ -186,6 +271,19 @@ public class WordleBot {
 		return newPossSolutions;
 	}
 	
+	/**
+	 * Returns true if a word can be a solution after a particular evaluation
+	 * 
+	 * If the guess is "least" with an evaluation of "caaaa" (correct, absent x4)
+	 * we now know the word "stale" cannot possibly be a solution because the correct letter for the first letter is "l"
+	 * We also know that "e", "a", "s", and "t" are absent in the solution
+	 * 
+	 * This also handles tricky words with double/triple letters
+	 * @param word
+	 * @param guess
+	 * @param evaluation
+	 * @return
+	 */
 	private static boolean wordMatchesGuess(String word, String guess, String evaluation) {
 		HashMap<Integer, String> correct = new HashMap<Integer, String>();
 		HashMap<String, Integer> present = new HashMap<String, Integer>();
@@ -237,6 +335,14 @@ public class WordleBot {
 		return true;
 	}
 	
+	/**
+	 * Returns True if a wrod has N number of letters present in the evaluation
+	 * @param word
+	 * @param letter
+	 * @param count
+	 * @param correct
+	 * @return
+	 */
 	private static boolean wordHasNPresent(String word, String letter, int count, HashMap<Integer, String> correct) {
 		int found = 0;
 		for (int i = 0; i < word.length(); i++) {
@@ -252,6 +358,11 @@ public class WordleBot {
 		return found >= count;
 	}
 	
+	/**
+	 * Hardcoded optimal first guesses due to the fact that it takes too long to run the algorithm for the first time
+	 * These are based on the running the bot once and copying them from the ouput
+	 * @return
+	 */
 	private static HashMap<String, Float> firstGuessOptimal() {
 		// takes too long to calculate the optimal word for the first guess
 		HashMap<String, Float> optimal = new HashMap<String, Float>();
@@ -268,6 +379,11 @@ public class WordleBot {
 		return optimal;
 	}
 	
+	/**
+	 * Finds the optimal guess based on the current set of possible solutions
+	 * @param possSolutions
+	 * @return
+	 */
 	private static String findOptimalGuess(HashSet<String> possSolutions) {
 		String guess = "";
 		HashMap<String, Float> optimalGuesses = findOptimalGuesses(possSolutions);
@@ -280,6 +396,11 @@ public class WordleBot {
 		return guess;
 	}
 	
+	/**
+	 * Finds the N best guesses based on the current set of possible solutions
+	 * @param possSolutions
+	 * @return
+	 */
 	private static HashMap<String, Float> findOptimalGuesses(HashSet<String> possSolutions) {
 		HashMap<String, Float> wordEntropy = new HashMap<String, Float>();
 		
@@ -290,6 +411,12 @@ public class WordleBot {
 		return sortAndTrimHashMap(wordEntropy, wordEntropy.size());
 	}
 	
+	/**
+	 * Sorts a HashMap based on the value and trims it such that it only has <trimAmount> keys
+	 * @param map
+	 * @param trimAmount
+	 * @return
+	 */
 	private static HashMap<String, Float> sortAndTrimHashMap(HashMap<String, Float> map, int trimAmount) {
         List<Map.Entry<String, Float> > list =
                new LinkedList<Map.Entry<String, Float> >(map.entrySet());
@@ -314,7 +441,12 @@ public class WordleBot {
         return newMap;
 	}
 	
-	
+	/**
+	 * Evaluates the entropy for a given word
+	 * @param word
+	 * @param words
+	 * @return
+	 */
 	private static float evaluateWordEntropy(String word, HashSet<String> words) {
 		HashMap<String, HashSet<String>> entropyMap = new HashMap<String, HashSet<String>>();
 		for (String possAnswer: words) {
@@ -331,6 +463,16 @@ public class WordleBot {
 		return getEntropy(entropyMap, words);
 	}
 	
+	/**
+	 *  Calculates the entropy based on the way the remaining solutions are divided up by evaluations for the given word
+	 *  The intuitive way to think of entropy is that if a word will cut the number of possible solutions in half on average, the entropy will be 1. 
+	 *  If it cuts the number of solutuons down to 1/4 on average, the entropy is 2.
+	 *  
+	 *  We are looking for the word that divides the possible solutions as much as possible.
+	 * @param entropyMap
+	 * @param possAnswers
+	 * @return
+	 */
 	private static float getEntropy(HashMap<String, HashSet<String>> entropyMap, HashSet<String> possAnswers) {
 		float entropy = 0;
 		for (String guess: entropyMap.keySet()) {
@@ -341,6 +483,11 @@ public class WordleBot {
 		return entropy;
 	}
 	
+	/**
+	 * Converts a String array into a String
+	 * @param row
+	 * @return
+	 */
 	private static String readArrayRow(String[] row) {
 		String word = "";
 		for (String c: row) {

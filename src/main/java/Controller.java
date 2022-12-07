@@ -60,8 +60,7 @@ public class Controller {
 		}
 	 */
 
-	public Controller(UI newUI, WordleGame newGame, boolean single, String serverAdd, MongoCollection<Document> coll,
-			String name) {
+	public Controller(UI newUI, WordleGame newGame, boolean single, String serverAdd, MongoCollection<Document> coll, String name) {
 		ui = newUI;
 		game = newGame;
 		guessEvaluator = new GuessEvaluator();

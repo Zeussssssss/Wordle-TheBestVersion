@@ -356,7 +356,6 @@ public class UI {
 	}
 
 	public void disposeFrames() {
-		System.out.println("!!!!!!!Trying to CLOSE FRAMES!!!!!!!!");
 		mainFrame.dispose();
 		frame.dispose();
 	}

@@ -19,7 +19,6 @@ public class LeaderBoard {
 	
 	public void display()
 	{
-		System.out.println("DISPLAYING!!!!!!!!!!!!!!!!!!");
 		JFrame window = new JFrame("BOT");
 		window.setLayout(null);
 		window.setBounds(300,30,500,600);
