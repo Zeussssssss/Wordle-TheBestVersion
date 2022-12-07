@@ -1,8 +1,14 @@
+/**
+ * File: Controller.java
+ * Assignment: CSC335PA3
+ * @author Cezar Rata
+ * 
+ * Description: This is the GuessEvaluatior class. It contains functionality to evaluate guesses and check if they are valid.
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
-
-// skill is (entropy / max_entropy)
 
 class GuessEvaluator {
 
@@ -22,6 +28,10 @@ class GuessEvaluator {
 		}
 	}
 
+	/**
+	 * Reads the guesses that are allowed from files.
+	 * @throws FileNotFoundException
+	 */
 	private static void readAllowedGuesses() throws FileNotFoundException {
 		allowedGuesses = new HashSet<String>();
 		Scanner scannerGuesses = new Scanner(new File(ENGLISH_GUESSES));
@@ -36,10 +46,25 @@ class GuessEvaluator {
 		}
 	}
 
-	public boolean isInVocabulary(String word) {
-		return allowedGuesses.contains(word);
-	}
+	/**
+	 * Returns true if the word is in the vocabulary
+	 * @param word
+	 * @return
+	 */
+	public boolean isInVocabulary(String word) { return allowedGuesses.contains(word); }
 
+	/**
+	 * Returns the evaluation for a guess
+	 * 
+	 * "c" represents the letter is in the correct location
+	 * "p" reprsents the letter is in the word but not in the correct location
+	 * "a" represents the letter is not in the word
+	 * 
+	 * Handles words with double/triple letters
+	 * @param guess
+	 * @param answer
+	 * @return
+	 */
 	public String[] evaluateGuess(String guess, String answer) {
 		int wordSize = answer.length();
 		HashMap<String, Integer> frequency = new HashMap<String, Integer>();
@@ -92,6 +117,12 @@ class GuessEvaluator {
 		return evaluations;
 	}
 
+	/**
+	 * Helper method for evaluateGuess() which removes the letters that are in the correct location from the word
+	 * @param evaluation
+	 * @param answer
+	 * @return
+	 */
 	private static String removeCorrect(HashMap<Integer, String> evaluation, String answer) {
 		String newAnswer = "";
 		for (int i = 0; i < answer.length(); i++) {
