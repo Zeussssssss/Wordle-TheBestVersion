@@ -1,3 +1,9 @@
+/**
+ * Name: Alankrit Jacinth Moses
+ * FileName: Main.java
+ * Description: This is Main class from the responsible for the opening menu
+ * 				and starting the game in single player or collaborative mode.
+ */
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -27,33 +33,27 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-/** 
- * This is the main class. Run this class to start 
- * the game and display the main menu
- * 
- *
- */
 public class Main {
 
 	private static WordleGame game;
 	private static Controller controller;
 	private static UI ui;
 	private static WordleServer server;
-	private static MongoCollection<Document> collection;
+	private static MongoCollection<Document> collection; 
 	private static MongoDatabase db;
-	private static MongoClient mongoClient;
+	private static MongoClient mongoClient; 
 	private static String playerName = "player";
+	
 
 	public static void main(String[] args) throws FileNotFoundException, UnknownHostException {
-
-		//connect to MongoDB
+		
 		setUpDatabaseConnection();
 
 		Clip music = playMusic("Menu.wav", true);
 		JFrame jf = new JFrame("WORDLE");
 		JPanel jp = new JPanel();
 		jf.getContentPane().add(jp);
-		jp.setBounds(0, 0, 700, 700);
+		jp.setBounds(0,0,700,700);
 		jp.setOpaque(false);
 		jp.setVisible(true);
 		jf.setBounds(400, 50, 700, 700);
@@ -103,10 +103,6 @@ public class Main {
 		bg.setIcon(image);
 		jf.getContentPane().add(bg);
 		bg.repaint();
-		
-		/*
-		 * ACTION LISTENTERS START HERE 
-		 */
 		single.addMouseListener(new MouseListener() {
 
 			int x = 20;
@@ -146,7 +142,6 @@ public class Main {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new PopUp("COPIED TO CLIPBOARD!", jp);
 				single.setVisible(false);
 				single.setEnabled(false);
 				multi.setVisible(false);
@@ -167,7 +162,7 @@ public class Main {
 						try {
 							new Thread(server = new WordleServer()).start();
 							newGame(false, server.getAddress(), music);
-							String str = "" + server.getAddress();
+							String str = ""+server.getAddress();
 							StringSelection stringSelection = new StringSelection(str);
 							Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 							clipboard.setContents(stringSelection, null);
@@ -293,24 +288,12 @@ public class Main {
 		});
 	}
 
-	/** 
-	 * Connects to our mongodb database 
-	 * 
-	 * @throws UnknownHostException
-	 */
 	private static void setUpDatabaseConnection() throws UnknownHostException {
-		mongoClient = MongoClients.create(
-				"mongodb+srv://adityakumar:775NRisvDQGSwl8Q@wordle.w9bbtv3.mongodb.net/?retryWrites=true&w=majority");
+		mongoClient = MongoClients.create("mongodb+srv://adityakumar:775NRisvDQGSwl8Q@wordle.w9bbtv3.mongodb.net/?retryWrites=true&w=majority");
 		db = mongoClient.getDatabase("Wordle");
 		collection = db.getCollection("Wordle");
 	}
 
-	/** 
-	 * Plays the game sounds
-	 * @param path
-	 * @param loop
-	 * @return
-	 */
 	public static Clip playMusic(String path, boolean loop) {
 		path = "Resources/" + path;
 		try {
