@@ -191,7 +191,7 @@ public class Controller {
 		String arr[] = new String[10];
 		while (i < 10) {
 			Document curr = it.next();
-			arr[i] = curr.getString("PlayerName");
+			arr[i] = curr.getString("_id");
 			arr[i + 1] = Integer.toString(curr.getInteger("Score"));
 			i += 2;
 		}
@@ -227,7 +227,6 @@ public class Controller {
 	public int[] load() {
 		// Played,Won,CurrStreak,HighestStreak,1guess,2guess,3guess,4guess,5guess,6guess
 		int[] ret = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		int score = 0;
 		File file = new File("data.txt");
 		Scanner myReader = null;
 		try {
@@ -284,7 +283,7 @@ public class Controller {
 	}
 
 	public Document playerAsADBObject(int score) {
-		return new Document("_id", Math.random()).append("PlayerName", name).append("Score", score);
+		return new Document("_id", name).append("Score", score);
 	}
 
 	public void saveGame() throws IOException {
@@ -295,13 +294,17 @@ public class Controller {
 		fr.close();
 		// DB WRITING
 		BasicDBObject query = new BasicDBObject();
-		query.put("PlayerName", name);
+		query.put("_id", name);
 		if ((collection.find(query)).iterator().hasNext()) {
 			Document curr = collection.find(query).iterator().next();
 			int score = curr.getInteger("Score");
-			collection.updateOne(Filters.eq("PlayerName", name), Updates.set("Score", score + ((6 - curGuessIndex))));
+			if(won)
+				collection.updateOne(Filters.eq("_id", name), Updates.set("Score", score + ((6 - curGuessIndex))));
 		} else {
-			collection.insertOne(playerAsADBObject((6 - curGuessIndex)));
+			if(won)
+				collection.insertOne(playerAsADBObject((6 - curGuessIndex)));
+			else 
+				collection.insertOne(playerAsADBObject(0));
 		}
 	}
 
