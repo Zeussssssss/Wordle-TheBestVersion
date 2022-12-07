@@ -48,7 +48,8 @@ public class UI {
 			{ 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L' }, { 'Z', 'X', 'C', 'V', 'B', 'N', 'M' } };
 
 	/**
-	 * Constructor to create the basic view
+	 * Constructor to create the View object with the mode light or dark
+	 * @param mode
 	 */
 	public UI(String mode) {
 		playMusic("start.wav");
@@ -74,6 +75,9 @@ public class UI {
 		grid = new JLabel[6][5];
 	}
 
+	/**
+	 * Method for refreshing and displaying the board/grid on the screen
+	 */
 	public void displayBoard() {
 		// loop to build the board
 		Graphics graphics = panel.getGraphics();
@@ -100,6 +104,10 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Method to start the UI and add GUI elements to it
+	 * @param server: The server address to be connected to
+	 */
 	public void start(String server) {
 
 		// Creating main frame
@@ -138,6 +146,7 @@ public class UI {
 		box.setBounds(15, (int) (height * 0.02), 100, (int) (height * 0.06));
 		box.setBorder(BorderFactory.createLineBorder(BLACK, 3));
 
+		// Adding the swtich to toggle light/dark mode
 		swtch = new JLabel("SWITCH");
 		swtch.setFont(new Font("Arial", Font.BOLD, 8));
 		if (mode.equals("light")) {
@@ -157,6 +166,7 @@ public class UI {
 		panel.add(swtch);
 		panel.add(box);
 
+		//Adding mouseListeners
 		swtch.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -181,6 +191,7 @@ public class UI {
 			}
 		});
 
+		// Initializing labels/grid boxes
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 5; j++) {
 				JLabel label = new JLabel("", SwingConstants.CENTER);
@@ -195,8 +206,9 @@ public class UI {
 		int keySize = (int) (labelSize * 0.9);
 		int offsetX = (int) (width * 0.15);
 		int labelX = (int) (width * 0.06);
+		
+		// Adding keyboard to the frame
 		for (int x = 0; x < 3; x++) {
-//			System.out.println("Length: "+keyboard[x].length);
 			offsetX = (width - ((int) (keyboard[x].length * (labelX + 10) - 10))) / 2;
 			for (int y = 0; y < keyboard[x].length; y++) {
 				JLabel key = new JLabel(keyboard[x][y] + "", SwingConstants.CENTER);
@@ -285,7 +297,10 @@ public class UI {
 			}
 		});
 	}
-
+	
+	/**
+	 * Method to start the toggle animation of the switch
+	 */
 	public void animateToggle() {
 		freeze = true;
 		this.toggleMode();
@@ -297,15 +312,28 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Update the controller inside the view object
+	 * @param c
+	 */
 	public void addController(Controller c) {
 		controller = c;
 	}
 
+	/**
+	 * Method to throw warning messages as PopUps
+	 * @param msg
+	 */
 	public void throwWarning(String msg) {
 		// state.setText(msg);
 		new PopUp(msg, pseudoPanel);
 	}
 
+	/**
+	 * Method to initiate the animation of Row when a correct is entered
+	 * @param rowIdx
+	 * @param type
+	 */
 	public void animateRow(int rowIdx, String type) {
 
 		freeze = true;
@@ -324,6 +352,9 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Update variables, display stats and freeze game when the game has ended
+	 */
 	public void endGame() {
 		gameOver = true;
 		state.setText("G A M E   O V E R !");
@@ -335,13 +366,10 @@ public class UI {
 		}
 	}
 
-//	public void restart() {
-//		freeze = false;
-//		gameOver = false;
-//		mainFrame.dispose();
-//		start();
-//	}
-
+	/**
+	 * Method to play Music present in the Resources folder
+	 * @param path
+	 */
 	public void playMusic(String path) {
 		path = "Resources/" + path;
 		try {
@@ -355,12 +383,18 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Method to close the game and stats window.
+	 */
 	public void disposeFrames() {
 		System.out.println("!!!!!!!Trying to CLOSE FRAMES!!!!!!!!");
 		mainFrame.dispose();
 		frame.dispose();
 	}
 
+	/**
+	 * Method to toggle the change the color of the UI elements to toggle the light/dark mode.
+	 */
 	public void toggleMode() {
 		playMusic("switch.wav");
 		if (mode.equals("light")) {
@@ -391,6 +425,11 @@ public class UI {
 		displayBoard();
 	}
 
+	/**
+	 * Class for animating the Toggle switch
+	 * @author Alankrit Moses
+	 *
+	 */
 	class Toggle extends TimerTask {
 		int rate;
 		int x1;
@@ -434,6 +473,9 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Method to display Stats in a new Frame
+	 */
 	public void displayStats() {
 		// Array format
 		// Played,Won,CurrStreak,HighestStreal,1guess,2guess,3guess,4guess,5guess,6guess
@@ -446,12 +488,12 @@ public class UI {
 
 		int x = (int) (0.8 * height);
 		frame = new JFrame("STATS");
-		frame.setBounds(500, 100, x, x);
+		frame.setBounds(500, 100, x, x+10);
 		JPanel jp = new JPanel();
 		frame.getContentPane().add(jp);
 		frame.setLayout(null);
 		jp.setLayout(null);
-		jp.setBounds(0, 0, x, x);
+		jp.setBounds(0, 0, x, x+10);
 		jp.setBackground(labelBack);
 
 		JLabel status = new JLabel(controller.won() ? "YOU WON" : "YOU LOST", SwingConstants.CENTER);
@@ -533,6 +575,7 @@ public class UI {
 			currWait += (width * 11);
 		}
 
+		// Adding the last four buttons at the bottom of the Stats display page
 		JLabel restart = new JLabel("RESTART", SwingConstants.CENTER);
 		restart.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
 		restart.setBounds(x / 4, x - x / 5, x / 4 - 5, x / 16);
@@ -568,6 +611,7 @@ public class UI {
 
 		jp.repaint();
 
+		// Adding MouseListeners to last four buttons
 		wordleBot.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -659,6 +703,11 @@ public class UI {
 		});
 	}
 
+	/**
+	 * Class to control the animation of the guess distribution bars
+	 * @author Alankrit Moses
+	 *
+	 */
 	class BarAnim extends TimerTask {
 		Timer timer;
 		int x;
@@ -679,6 +728,11 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Class to control animation of the valid word entry row animation
+	 * @author Alankrit Moses
+	 *
+	 */
 	class Animate extends TimerTask {
 		int rowIdx;
 		int size;
@@ -729,6 +783,11 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Class to control the animation when invalid word is entered
+	 * @author Alankrit Moses
+	 *
+	 */
 	class Shake extends TimerTask {
 		int rowIdx;
 		int size;

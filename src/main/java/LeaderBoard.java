@@ -1,6 +1,11 @@
+/**
+ * Name: Alankrit Jacinth Moses
+ * FileName: BotDisplay.java
+ * Description: This class is responsible for instantiating the frame and
+ * 				displaying the LeaderBoard and top 5 scores globally.
+ */
 import java.awt.Color;
 import java.awt.Font;
-
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,6 +18,13 @@ public class LeaderBoard {
 	Color labelFore, labelBack;
 	private String mode;
 
+	/**
+	 * Constructor to initialize global variables
+	 * @param array
+	 * @param labelFore
+	 * @param labelBack
+	 * @param mode
+	 */
 	public LeaderBoard(String[] array, Color labelFore, Color labelBack, String mode) {
 		this.arr = array;
 		this.labelBack = labelBack;
@@ -21,8 +33,11 @@ public class LeaderBoard {
 		this.display();
 	}
 
+	/**
+	 * Method to create the frame display the top 5 scores
+	 */
 	public void display() {
-		JFrame window = new JFrame("BOT");
+		JFrame window = new JFrame("LEADERBOARD");
 		window.setLayout(null);
 		window.setBounds(300, 30, 500, 600);
 		JPanel panel = new JPanel();

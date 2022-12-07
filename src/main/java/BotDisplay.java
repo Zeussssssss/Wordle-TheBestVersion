@@ -1,3 +1,9 @@
+/**
+ * Name: Alankrit Jacinth Moses
+ * FileName: BotDisplay.java
+ * Description: This class is responsible for instantiating the frame and
+ * 				displaying the WordleBot evaluations.
+ */
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -29,6 +35,13 @@ public class BotDisplay {
 	JLabel yourGuess;
 	JLabel botGuesses[];
 
+	/**
+	 * Contructor to initialize global variables and create the frame and panel
+	 * @param y
+	 * @param controller
+	 * @param labelFore
+	 * @param labelBack
+	 */
 	public BotDisplay(int y, Controller controller, Color labelFore, Color labelBack) {
 		bot = new WordleBot();
 		bot.evaluate(controller.getGame());
@@ -52,6 +65,9 @@ public class BotDisplay {
 		window.setVisible(true);
 	}
 
+	/**
+	 * Add the GUI elements to the Panel
+	 */
 	private void addElements() {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.labelSize = (int) ((y / 15) - 15);
@@ -175,6 +191,10 @@ public class BotDisplay {
 
 	}
 
+	/**
+	 * Change the display according to each guess made
+	 * @param guess
+	 */
 	public void display(int guess) {
 		Map<Integer, String> head = Map.of(1, "1st Guess<br>", 2, "2nd Guess<br>", 3, "3rd Guess<br>", 4,
 				"4th Guess<br>", 5, "5th Guess<br>", 6, "6th Guess<br>");
