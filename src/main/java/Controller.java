@@ -1,10 +1,9 @@
-
 /**
  * File: Controller.java
- * Assignment: CSC335PA3
+ * Assignment: CSC335 Final PA
  * @author Aman Dwivedi
- *
- * Description: This is the Controller class. It handles all the back end operation. 
+ * Description: This is the Controller class. It handles all the back end operation.
+ * And connects between UI and all other stuff. 
  */
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -54,13 +53,15 @@ public class Controller {
 	private static Scanner in;
 	private static PrintWriter out;
 
-	// DB QUERY-JUST PUT IT IN THE FUNCTION THAT YOU WOULD USE FOR LEADER BOARD
-	/*
-	 * FindIterable<Document> iterDoc =
-	 * collection.find().sort(Sorts.descending("Score")); MongoCursor<Document> it =
-	 * iterDoc.iterator(); while (it.hasNext()) { System.out.println(it.next()); }
+	/**
+	 * Constructor
+	 * @param newUI
+	 * @param newGame
+	 * @param single
+	 * @param serverAdd
+	 * @param coll
+	 * @param name
 	 */
-
 	public Controller(UI newUI, WordleGame newGame, boolean single, String serverAdd, MongoCollection<Document> coll,
 			String name) {
 		ui = newUI;
@@ -72,37 +73,50 @@ public class Controller {
 		this.serverAddress = serverAdd;
 		if (!singlePlayer) {
 			try {
-				System.out.println(serverAdd);
 				socket = new Socket(serverAdd, 59896);
 				in = new Scanner(socket.getInputStream());
 				out = new PrintWriter(socket.getOutputStream(), true);
 				myTurn = false;
 
 			} catch (IOException e) {
-				System.out.println("Error on controller side");
 				e.printStackTrace();
 			}
 			new Thread(new ServerReader()).start();
 		}
 		init();
 	}
-
+	
+	/**
+	 * Initializes everything to zero
+	 */
 	private static void init() {
 
 		curGuess = "";
 		curGuessIndex = 0;
 		charIndex = 0;
 	}
-
+	
+	/**
+	 * Starts the UI
+	 */
 	public void start() {
-		// start the UI
 		ui.start(this.serverAddress);
 	}
-
+	
+	/**
+	 * Returns the game object
+	 * @return
+	 */
 	public WordleGame getGame() {
 		return game;
 	}
-
+	
+	/**
+	 * Takes the string from the UI and checks for the validation of the word
+	 * @param c
+	 * @param notifyServer
+	 * @return
+	 */
 	public boolean update(String c, boolean notifyServer) {
 		// Since only the server reader would call this method with !notifyServer, this
 		// special check
@@ -175,15 +189,19 @@ public class Controller {
 			return true;
 		}
 	}
-
-	private void newGame() {
-		this.start();
-	}
-
+	
+	/**
+	 * Returns the state of game
+	 * @return
+	 */
 	public boolean won() {
 		return won;
 	}
-
+	
+	/**
+	 * Returns the leaderboard as a string array
+	 * @return
+	 */
 	public String[] getLeaderBoard() {
 		FindIterable<Document> iterDoc = collection.find().sort(Sorts.descending("Score"));
 		MongoCursor<Document> it = iterDoc.iterator();
@@ -198,6 +216,11 @@ public class Controller {
 		return arr;
 	}
 
+	/**
+	 * Starts a new game
+	 * @param notifyServer
+	 * @param word
+	 */
 	public void restart(boolean notifyServer, String word) {
 		ui.disposeFrames();
 		game.init();
@@ -212,6 +235,9 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Copies result to clipboard
+	 */
 	public void clipboard() {
 		String myString = "Today's word was " + game.getAnswer();
 		if (this.won) {
@@ -224,6 +250,10 @@ public class Controller {
 		clipboard.setContents(stringSelection, null);
 	}
 
+	/**
+	 * Load local statistics. Returns an array of stats.
+	 * @return
+	 */
 	public int[] load() {
 		// Played,Won,CurrStreak,HighestStreak,1guess,2guess,3guess,4guess,5guess,6guess
 		int[] ret = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -282,10 +312,19 @@ public class Controller {
 		return ret;
 	}
 
+	/**
+	 * Adds to mongodb
+	 * @param score
+	 * @return
+	 */
 	public Document playerAsADBObject(int score) {
 		return new Document("_id", name).append("Score", score);
 	}
 
+	/**
+	 * Save progress locally
+	 * @throws IOException
+	 */
 	public void saveGame() throws IOException {
 
 		File file = new File("data.txt");
@@ -308,23 +347,20 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Current number of guesses.
+	 * @return
+	 */
 	public int getCurrGuessInd() {
 		return curGuessIndex;
 	}
- 
-	/** 
-	 * This class receives messages from the server 
-	 * and modifies the client side game state accordingly 
-	 * @author Aditya Kumar
+
+	/**
+	 * This class is for handling all the server connections. 
 	 *
 	 */
 	class ServerReader implements Runnable {
 
-		/** 
-		 * Runs the server reader object for this particular 
-		 * client
-		 * 
-		 */
 		@Override
 		public void run() {
 			while (true) {
@@ -337,7 +373,7 @@ public class Controller {
 						myTurn = false;
 					} else if (result.startsWith("<< WORD:")) {
 						if (!game.getAnswer().equals(result.split(" ")[2])) {
-							System.out.println("UPDATED ANSWER: " + result.split(" ")[2]);
+							//System.out.println("UPDATED ANSWER: " + result.split(" ")[2]);
 							game.changeAnswer(result.split(" ")[2]);
 						}
 					} else if (result.equals("<< DELETE")) {
@@ -349,7 +385,7 @@ public class Controller {
 					} else if (result.startsWith("<< ADD LETTER ")) {
 						update(result.split(" ")[3], false);
 					} else {
-						System.out.println(result);
+						//System.out.println(result);
 					}
 				}
 			}
