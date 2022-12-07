@@ -1,6 +1,6 @@
 /**
  * Name: Alankrit Jacinth Moses
- * FileName: BotDisplay.java
+ * FileName: LeaderBoard.java
  * Description: This class is responsible for instantiating the frame and
  * 				displaying the LeaderBoard and top 5 scores globally.
  */
