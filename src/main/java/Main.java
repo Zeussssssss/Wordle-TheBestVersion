@@ -1,5 +1,5 @@
 /**
- * Name: Alankrit Jacinth Moses
+ * Name: Aman Dwivedi
  * FileName: Main.java
  * Description: This is Main class from the responsible for the opening menu
  * 				and starting the game in single player or collaborative mode.
@@ -287,13 +287,23 @@ public class Main {
 			}
 		});
 	}
-
+	
+	/**
+	 * By Aditya Kumar
+	 * Connects to MongoDB to access leaderboard data
+	 * @throws UnknownHostException
+	 */
 	private static void setUpDatabaseConnection() throws UnknownHostException {
 		mongoClient = MongoClients.create("mongodb+srv://adityakumar:775NRisvDQGSwl8Q@wordle.w9bbtv3.mongodb.net/?retryWrites=true&w=majority");
 		db = mongoClient.getDatabase("Wordle");
 		collection = db.getCollection("Wordle");
 	}
-
+	
+	/**
+	 * By Alankrit Moses
+	 * Plays music in the background
+	 * @throws UnknownHostException
+	 */
 	public static Clip playMusic(String path, boolean loop) {
 		path = "Resources/" + path;
 		try {
@@ -311,6 +321,13 @@ public class Main {
 		return null;
 	}
 
+	/**
+	 * Starts a new game and disposes the main menu
+	 * @param single
+	 * @param serverAddress
+	 * @param clip
+	 * @throws FileNotFoundException
+	 */
 	public static void newGame(boolean single, String serverAddress, Clip clip) throws FileNotFoundException {
 		clip.stop();
 		ui = new UI("dark");
