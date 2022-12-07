@@ -1,5 +1,6 @@
 /**
  * Author: Alankrit Jacinth Moses
+ * FileName: PopUp.java
  * Description: This class is part of the UI(view) which instantiates and controls
  * 				the animation of the PopUp messages.
  */
