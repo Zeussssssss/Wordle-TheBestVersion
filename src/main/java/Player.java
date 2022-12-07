@@ -5,7 +5,11 @@ import java.util.Scanner;
 
 /**
  * 
- * @author Aditya
+ * The player class that represents the clients connected to the server
+ * 
+ * Used on the server side
+ * 
+ * @author Aditya Kumar
  *
  */
 public class Player {

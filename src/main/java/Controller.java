@@ -311,9 +311,20 @@ public class Controller {
 	public int getCurrGuessInd() {
 		return curGuessIndex;
 	}
-
+ 
+	/** 
+	 * This class receives messages from the server 
+	 * and modifies the client side game state accordingly 
+	 * @author Aditya Kumar
+	 *
+	 */
 	class ServerReader implements Runnable {
 
+		/** 
+		 * Runs the server reader object for this particular 
+		 * client
+		 * 
+		 */
 		@Override
 		public void run() {
 			while (true) {

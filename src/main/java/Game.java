@@ -1,6 +1,8 @@
 /**
- * 
- * @author Aditya
+ * This is the game class that holds the game 
+ * state for the server side and manages the current 
+ * player 
+ * @author Aditya Kumar
  *
  */
 

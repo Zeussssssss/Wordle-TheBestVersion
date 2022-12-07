@@ -27,6 +27,12 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+/** 
+ * This is the main class. Run this class to start 
+ * the game and display the main menu
+ * 
+ *
+ */
 public class Main {
 
 	private static WordleGame game;
@@ -40,6 +46,7 @@ public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException, UnknownHostException {
 
+		//connect to MongoDB
 		setUpDatabaseConnection();
 
 		Clip music = playMusic("Menu.wav", true);
@@ -96,6 +103,10 @@ public class Main {
 		bg.setIcon(image);
 		jf.getContentPane().add(bg);
 		bg.repaint();
+		
+		/*
+		 * ACTION LISTENTERS START HERE 
+		 */
 		single.addMouseListener(new MouseListener() {
 
 			int x = 20;
@@ -282,6 +293,11 @@ public class Main {
 		});
 	}
 
+	/** 
+	 * Connects to our mongodb database 
+	 * 
+	 * @throws UnknownHostException
+	 */
 	private static void setUpDatabaseConnection() throws UnknownHostException {
 		mongoClient = MongoClients.create(
 				"mongodb+srv://adityakumar:775NRisvDQGSwl8Q@wordle.w9bbtv3.mongodb.net/?retryWrites=true&w=majority");
@@ -289,6 +305,12 @@ public class Main {
 		collection = db.getCollection("Wordle");
 	}
 
+	/** 
+	 * Plays the game sounds
+	 * @param path
+	 * @param loop
+	 * @return
+	 */
 	public static Clip playMusic(String path, boolean loop) {
 		path = "Resources/" + path;
 		try {
