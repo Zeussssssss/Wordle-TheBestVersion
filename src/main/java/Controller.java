@@ -1,3 +1,4 @@
+
 /**
  * File: Controller.java
  * Assignment: CSC335PA3
@@ -26,7 +27,9 @@ import com.mongodb.DBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.Updates;
 
 public class Controller {
 
@@ -53,11 +56,9 @@ public class Controller {
 
 	// DB QUERY-JUST PUT IT IN THE FUNCTION THAT YOU WOULD USE FOR LEADER BOARD
 	/*
-	 * FindIterable<Document> iterDoc = collection.find().sort(Sorts.descending("Score"));
-		MongoCursor<Document> it = iterDoc.iterator();
-		while (it.hasNext()) {
-			System.out.println(it.next());
-		}
+	 * FindIterable<Document> iterDoc =
+	 * collection.find().sort(Sorts.descending("Score")); MongoCursor<Document> it =
+	 * iterDoc.iterator(); while (it.hasNext()) { System.out.println(it.next()); }
 	 */
 
 	public Controller(UI newUI, WordleGame newGame, boolean single, String serverAdd, MongoCollection<Document> coll,
@@ -87,7 +88,7 @@ public class Controller {
 	}
 
 	private static void init() {
-		
+
 		curGuess = "";
 		curGuessIndex = 0;
 		charIndex = 0;
@@ -191,8 +192,8 @@ public class Controller {
 		while (i < 10) {
 			Document curr = it.next();
 			arr[i] = curr.getString("PlayerName");
-			arr[i+1] = Integer.toString(curr.getInteger("Score"));
-			i+=2;
+			arr[i + 1] = Integer.toString(curr.getInteger("Score"));
+			i += 2;
 		}
 		return arr;
 	}
@@ -210,7 +211,7 @@ public class Controller {
 			game.changeAnswer(word);
 		}
 	}
-	
+
 	public void clipboard() {
 		String myString = "Today's word was " + game.getAnswer();
 		if (this.won) {
@@ -279,9 +280,6 @@ public class Controller {
 			high = curStreak;
 		ret[2] = curStreak;
 		ret[3] = high;
-		score = ret[4] * 6 + ret[5] * 5 + ret[6] * 4 + ret[7] * 3 + ret[8] * 2 + ret[9];
-		// DB WRITING
-		collection.insertOne(playerAsADBObject(score));
 		return ret;
 	}
 
@@ -295,8 +293,18 @@ public class Controller {
 		FileWriter fr = new FileWriter(file, true);
 		fr.write(this.won + " " + (curGuessIndex + 1) + "\n");
 		fr.close();
+		// DB WRITING
+		BasicDBObject query = new BasicDBObject();
+		query.put("PlayerName", name);
+		if ((collection.find(query)).iterator().hasNext()) {
+			Document curr = collection.find(query).iterator().next();
+			int score = curr.getInteger("Score");
+			collection.updateOne(Filters.eq("PlayerName", name), Updates.set("Score", score + ((6 - curGuessIndex))));
+		} else {
+			collection.insertOne(playerAsADBObject((6 - curGuessIndex)));
+		}
 	}
-	
+
 	public int getCurrGuessInd() {
 		return curGuessIndex;
 	}

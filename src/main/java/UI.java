@@ -26,7 +26,7 @@ public class UI {
 	private JFrame frame, mainFrame;
 	private boolean freeze, gameOver;
 	private JLabel[][] grid;
-	private JPanel panel,pseudoPanel;
+	private JPanel panel, pseudoPanel;
 	private JLabel state, box, swtch;
 	private final String WORDLE = "WORDLE";
 	private final String BACKSPACE = "BACKSPACE";
@@ -103,7 +103,7 @@ public class UI {
 	public void start(String server) {
 
 		// Creating main frame
-		freeze = false; 
+		freeze = false;
 		gameOver = false;
 		mainFrame = new JFrame(WORDLE);
 		mainFrame.setLayout(null);
@@ -128,7 +128,7 @@ public class UI {
 		state.setBounds(0, 0, width, (int) (height * 0.1));
 		state.setForeground(labelFore);
 		panel.add(state);
-		if(server!="") {
+		if (server != "") {
 			new PopUp("Server copied to clipboard", panel);
 		}
 		panel.setBackground(labelBack);
@@ -302,8 +302,8 @@ public class UI {
 	}
 
 	public void throwWarning(String msg) {
-		//state.setText(msg);
-		new PopUp(msg,pseudoPanel);
+		// state.setText(msg);
+		new PopUp(msg, pseudoPanel);
 	}
 
 	public void animateRow(int rowIdx, String type) {
@@ -543,7 +543,7 @@ public class UI {
 		jp.add(restart);
 		JLabel wordleBot = new JLabel("WORDLE BOT", SwingConstants.CENTER);
 		wordleBot.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
-		wordleBot.setBounds(x/2+5,x-x/5,x/4-5,x/16);
+		wordleBot.setBounds(x / 2 + 5, x - x / 5, x / 4 - 5, x / 16);
 		wordleBot.setForeground(labelFore);
 		wordleBot.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		wordleBot.setBackground(GREEN.darker());
@@ -551,83 +551,111 @@ public class UI {
 		jp.add(wordleBot);
 		JLabel share = new JLabel("SHARE", SwingConstants.CENTER);
 		share.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
-		share.setBounds(x/4,x-x/5+x/16+10,x/4-5,x/16);
+		share.setBounds(x / 4, x - x / 5 + x / 16 + 10, x / 4 - 5, x / 16);
 		share.setForeground(labelFore);
 		share.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		share.setBackground(new Color(0,170,170));
+		share.setBackground(new Color(0, 170, 170));
 		share.setOpaque(true);
 		jp.add(share);
 		JLabel leaderBoard = new JLabel("LEADERBOARD", SwingConstants.CENTER);
 		leaderBoard.setFont(new Font("Arial", Font.BOLD, (int) (0.3 * x / 10)));
-		leaderBoard.setBounds(x/2+5,x-x/5+x/16+10,x/4-5,x/16);
+		leaderBoard.setBounds(x / 2 + 5, x - x / 5 + x / 16 + 10, x / 4 - 5, x / 16);
 		leaderBoard.setForeground(labelFore);
 		leaderBoard.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		leaderBoard.setBackground(new Color(170,170,0));
+		leaderBoard.setBackground(new Color(170, 170, 0));
 		leaderBoard.setOpaque(true);
 		jp.add(leaderBoard);
-		
+
 		jp.repaint();
 
-		wordleBot.addMouseListener(new MouseListener()
-		{
+		wordleBot.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				BotDisplay bd = new BotDisplay(height, controller, labelFore, labelBack);
 			}
+
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
-		restart.addMouseListener(new MouseListener()
-		{
+		restart.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				controller.restart(true, "");
 			}
+
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
-		share.addMouseListener(new MouseListener()
-		{
+		share.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				controller.clipboard();
 			}
+
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
-		leaderBoard.addMouseListener(new MouseListener()
-		{
+		leaderBoard.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String arr[] = controller.getLeaderBoard();
-				new LeaderBoard(arr,labelFore,labelBack,mode);
+				new LeaderBoard(arr, labelFore, labelBack, mode);
 			}
+
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 		});
 	}
 

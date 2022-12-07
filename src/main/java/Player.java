@@ -12,7 +12,7 @@ public class Player {
 	private Player teamMate;
 	private Scanner input;
 	private PrintWriter output;
-	
+
 	public Player(Socket socket) throws IOException {
 		this.setInput(new Scanner(socket.getInputStream()));
 		this.setOutput(new PrintWriter(socket.getOutputStream(), true));
@@ -41,7 +41,5 @@ public class Player {
 	public void setTeamMate(Player teamMate) {
 		this.teamMate = teamMate;
 	}
-
-
 
 }

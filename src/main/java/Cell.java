@@ -21,13 +21,9 @@ public class Cell {
 	private static final Color GREEN = Color.getColor("", (7 << 16) + (176 << 8) + 52); // 16, 176, 52
 	private static final Color YELLOW = Color.getColor("", (204 << 16) + (172 << 8) + 8); // 204, 172, 8
 	private static final Color DARK_GRAY = Color.DARK_GRAY;
-	private static final Map<String, Color> colorEvaluationMap = Map.of(
-			"c", GREEN,
-			"p", YELLOW,
-			"a", DARK_GRAY
-	);
-	
-	public Cell(String newContent, String newEvaluation, Font newFont,int newX, int newY) {
+	private static final Map<String, Color> colorEvaluationMap = Map.of("c", GREEN, "p", YELLOW, "a", DARK_GRAY);
+
+	public Cell(String newContent, String newEvaluation, Font newFont, int newX, int newY) {
 		content = newContent;
 		evaluation = newEvaluation;
 		font = newFont;
@@ -36,10 +32,10 @@ public class Cell {
 		label = new JLabel("", SwingConstants.CENTER);
 		init();
 	}
-	
+
 	private static void init() {
 		label.setFont(font);
-		label.setBounds(width+(height*x),width+(height*y),width,width);
+		label.setBounds(width + (height * x), width + (height * y), width, width);
 		label.setVisible(true);
 		label.setBorder(BorderFactory.createLineBorder(LIGHT_GRAY, 1));
 		label.setText(content);
@@ -52,7 +48,9 @@ public class Cell {
 		label.setOpaque(true);
 		label.setForeground(WHITE);
 	}
-	
-	public JLabel getLabel() { return label; }
-	
+
+	public JLabel getLabel() {
+		return label;
+	}
+
 }

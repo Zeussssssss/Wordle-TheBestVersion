@@ -20,14 +20,14 @@ public class WordleGame {
 		readAnswersFile();
 		init();
 	}
-	
+
 	private static void readAnswersFile() throws FileNotFoundException {
 		possAnswers = new HashSet<String>();
 		Scanner scanner = new Scanner(new File(ENGLISH_ANSWERS));
-        while (scanner.hasNext()) {
-            String s = scanner.nextLine();
-            possAnswers.add(s.toLowerCase());
-        }
+		while (scanner.hasNext()) {
+			String s = scanner.nextLine();
+			possAnswers.add(s.toLowerCase());
+		}
 
 	}
 
@@ -37,12 +37,12 @@ public class WordleGame {
 		answer = generateAnswer();
 		isGameOver = false;
 	}
-	
+
 	private static String generateAnswer() {
 		String[] answers = possAnswers.toArray(new String[possAnswers.size()]);
 		Random random = new Random();
 		int randomIdx = random.nextInt(possAnswers.size());
-		System.out.println("Answer: "+answers[randomIdx]);
+		System.out.println("Answer: " + answers[randomIdx]);
 		return answers[randomIdx];
 	}
 
@@ -56,8 +56,8 @@ public class WordleGame {
 				guesses[row][i] = " ";
 			}
 		}
-		
-		if (row == numRows-1) {
+
+		if (row == numRows - 1) {
 			isGameOver = true;
 		}
 
@@ -67,13 +67,13 @@ public class WordleGame {
 		for (int i = 0; i < numCols; i++) {
 			guessEvaluations[row][i] = guessEvaluation[i];
 		}
-		
+
 		if (allCorrect(guessEvaluation)) {
 			isGameOver = true;
 		}
-		
+
 	}
-	
+
 	public boolean allCorrect(String[] guessEvaluation) {
 		for (int i = 0; i < numCols; i++) {
 			if (!(guessEvaluation[i].equals(CORRECT))) {
@@ -83,20 +83,36 @@ public class WordleGame {
 		return true;
 	}
 
-	public String[][] getGuesses() { return guesses; }
+	public String[][] getGuesses() {
+		return guesses;
+	}
 
-	public String[][] getGuessEvaluations() { return guessEvaluations; }
+	public String[][] getGuessEvaluations() {
+		return guessEvaluations;
+	}
 
-	public boolean isGameOver() { return isGameOver; }
+	public boolean isGameOver() {
+		return isGameOver;
+	}
 
-	public void newGame() { init(); }
+	public void newGame() {
+		init();
+	}
 
-	public int getMaxGuessSize() { return numCols; }
+	public int getMaxGuessSize() {
+		return numCols;
+	}
 
-	public int getMaxGuesses() { return numRows; }
+	public int getMaxGuesses() {
+		return numRows;
+	}
 
-	public String getAnswer() { return answer; }
-	
-	public void changeAnswer(String ans) {answer = ans;}
-	
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void changeAnswer(String ans) {
+		answer = ans;
+	}
+
 }
